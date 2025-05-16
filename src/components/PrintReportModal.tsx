@@ -35,8 +35,10 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
   const reportRef = useRef<HTMLDivElement>(null);
   
   const handlePrint = useReactToPrint({
-    content: () => reportRef.current,
+    documentTitle: 'Relatório de Pesagem',
     onAfterPrint: () => onOpenChange(false),
+    // Using contentRef instead of content for newer versions of react-to-print
+    contentRef: reportRef,
   });
 
   return (
