@@ -6,7 +6,7 @@ import { WeighingEntryForm } from '@/types/database';
 
 interface WeighingReportProps {
   entries: WeighingEntryForm[];
-  buyerId?: number;
+  buyerId?: string;
 }
 
 const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {

@@ -33,9 +33,11 @@ export interface UnitPrice {
 export interface Weighing {
   id: string;
   buyer_id: string;
-  total_weight_kg: number;
+  total_kg: number; // Changed from total_weight_kg to match database
   total_price: number;
   created_at: string;
+  tab_name: string; // Added to match database
+  report_date: string; // Added to match database
 }
 
 export interface WeighingEntry {
@@ -43,9 +45,9 @@ export interface WeighingEntry {
   weighing_id: string;
   item_type: string;
   product_id?: string | null;
-  gross_weight_kg: number;
-  tare_kg: number;
-  net_weight_kg: number;
+  gross_weight: number; // Changed from gross_weight_kg to match database
+  tare_used: number; // Changed from tare_kg to match database
+  net_weight: number; // Changed from net_weight_kg to match database
   unit_price: number;
   total_price: number;
   created_at: string;
@@ -54,7 +56,7 @@ export interface WeighingEntry {
 export interface WeighingEntryForm {
   id: string;
   itemType: string;
-  productId?: number | null;
+  productId?: string | null; // Changed from number to string
   productDescription?: string;
   grossWeightKg: number;
   tareKg: number;

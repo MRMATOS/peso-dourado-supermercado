@@ -19,13 +19,15 @@ import { Home, ChevronLeft, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface WeighingWithBuyer {
-  id: number;
-  buyer_id: number;
-  total_weight_kg: number;
+  id: string;
+  buyer_id: string;
+  total_kg: number;
   total_price: number;
   created_at: string;
+  tab_name: string;
+  report_date: string;
   buyer: {
-    id: number;
+    id: string;
     name: string;
     company?: string;
   };
@@ -138,7 +140,7 @@ const HistoryPage = () => {
 
   // Calculate grand totals
   const totalWeighings = weighings.length;
-  const totalWeight = weighings.reduce((sum, w) => sum + w.total_weight_kg, 0);
+  const totalWeight = weighings.reduce((sum, w) => sum + w.total_kg, 0);
   const totalPrice = weighings.reduce((sum, w) => sum + w.total_price, 0);
 
   return (

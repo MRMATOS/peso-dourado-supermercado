@@ -8,21 +8,9 @@ import {
   Buyer,
   WeighingEntry,
   Weighing,
-  Settings
+  Settings,
+  WeighingEntryForm
 } from '@/types/database';
-
-interface WeighingEntryForm {
-  id: string;
-  itemType: string;
-  productId?: string | null;
-  productDescription?: string;
-  grossWeightKg: number;
-  tareKg: number;
-  netWeightKg: number;
-  unitPrice: number;
-  totalPrice: number;
-  createdAt: Date;
-}
 
 interface WeighingContextType {
   // Data lists
@@ -190,7 +178,7 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
     
     try {
       // Calculate totals
-      const totalWeightKg = currentEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0);
+      const totalWeight = currentEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0);
       const totalPrice = currentEntries.reduce((sum, entry) => sum + entry.totalPrice, 0);
       
       // Insert weighing
@@ -198,8 +186,9 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
         .from('weighings')
         .insert({
           buyer_id: buyerId,
-          total_weight_kg: totalWeightKg,
-          total_price: totalPrice
+          total_kg: totalWeight,
+          total_price: totalPrice,
+          tab_name: settings?.tab1_name || 'Pesagem'
         })
         .select()
         .single();
@@ -211,9 +200,9 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
         weighing_id: weighingData.id,
         item_type: entry.itemType,
         product_id: entry.productId || null,
-        gross_weight_kg: entry.grossWeightKg,
-        tare_kg: entry.tareKg,
-        net_weight_kg: entry.netWeightKg,
+        gross_weight: entry.grossWeightKg,
+        tare_used: entry.tareKg,
+        net_weight: entry.netWeightKg,
         unit_price: entry.unitPrice,
         total_price: entry.totalPrice
       }));

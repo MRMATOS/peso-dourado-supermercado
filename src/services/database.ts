@@ -241,7 +241,7 @@ export async function getWeighings(options?: {
   return data || [];
 }
 
-export async function getWeighingDetails(weighingId: number) {
+export async function getWeighingDetails(weighingId: string) {
   const { data, error } = await supabase
     .from('weighing_entries')
     .select(`

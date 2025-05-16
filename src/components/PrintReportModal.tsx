@@ -37,7 +37,6 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
   const handlePrint = useReactToPrint({
     documentTitle: 'Relatório de Pesagem',
     onAfterPrint: () => onOpenChange(false),
-    // Using contentRef instead of content for newer versions of react-to-print
     contentRef: reportRef,
   });
 
@@ -63,7 +62,7 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
               </SelectTrigger>
               <SelectContent>
                 {buyers.map((buyer) => (
-                  <SelectItem key={buyer.id} value={buyer.id.toString()}>
+                  <SelectItem key={buyer.id} value={buyer.id}>
                     {buyer.name}
                   </SelectItem>
                 ))}
@@ -90,7 +89,7 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
           <div ref={reportRef}>
             <WeighingReport
               entries={currentEntries}
-              buyerId={selectedBuyerId ? parseInt(selectedBuyerId) : undefined}
+              buyerId={selectedBuyerId || undefined}
             />
           </div>
         </div>

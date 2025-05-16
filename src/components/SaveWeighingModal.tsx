@@ -47,7 +47,7 @@ const SaveWeighingModal = ({ open, onOpenChange }: SaveWeighingModalProps) => {
       return;
     }
 
-    const success = await saveWeighing(parseInt(selectedBuyerId));
+    const success = await saveWeighing(selectedBuyerId);
     if (success) {
       onOpenChange(false);
     }

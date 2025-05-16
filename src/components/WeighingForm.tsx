@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,7 +25,7 @@ const WeighingForm = () => {
 
   // Form state
   const [itemType, setItemType] = useState<string>('');
-  const [productId, setProductId] = useState<number | null>(null);
+  const [productId, setProductId] = useState<string | null>(null);
   const [grossWeightKg, setGrossWeightKg] = useState<number>(0);
   const [tareKg, setTareKg] = useState<number>(0);
   const [netWeightKg, setNetWeightKg] = useState<number>(0);
@@ -145,8 +144,8 @@ const WeighingForm = () => {
                 {itemType !== 'Osso' && <span className="text-xs text-muted-foreground ml-1">(Apenas para Osso)</span>}
               </Label>
               <Select
-                value={productId?.toString() || ''}
-                onValueChange={(value) => setProductId(parseInt(value))}
+                value={productId || ''}
+                onValueChange={(value) => setProductId(value || null)}
                 disabled={itemType !== 'Osso'}
               >
                 <SelectTrigger id="productId">
@@ -154,7 +153,7 @@ const WeighingForm = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {filteredProducts.map((product) => (
-                    <SelectItem key={product.id} value={product.id.toString()}>
+                    <SelectItem key={product.id} value={product.id}>
                       {product.description}
                     </SelectItem>
                   ))}
