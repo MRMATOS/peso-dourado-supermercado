@@ -96,7 +96,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     return (
       <div className={cn("relative", className)}>
         {prefix && (
-          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
             {prefix}
           </span>
         )}
@@ -112,12 +112,12 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           className={cn(
             prefix && "pl-8",
             suffix && "pr-8",
-            "text-right",
+            "text-right h-9 rounded-lg",
             className
           )}
         />
         {suffix && (
-          <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+          <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
             {suffix}
           </span>
         )}

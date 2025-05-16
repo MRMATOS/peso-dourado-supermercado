@@ -124,7 +124,7 @@ const NewBuyerForm = ({ onBuyerCreated, onCancel }: NewBuyerFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 py-4">
+    <form onSubmit={handleSubmit} className="space-y-4 p-6">
       <div className="space-y-2">
         <Label htmlFor="name">
           Nome <span className="text-red-500">*</span>
@@ -137,7 +137,7 @@ const NewBuyerForm = ({ onBuyerCreated, onCancel }: NewBuyerFormProps) => {
           className={errors.name ? 'border-red-500' : ''}
         />
         {errors.name && (
-          <p className="text-red-500 text-sm">{errors.name}</p>
+          <p className="text-red-500 text-xs">{errors.name}</p>
         )}
       </div>
 
@@ -153,7 +153,7 @@ const NewBuyerForm = ({ onBuyerCreated, onCancel }: NewBuyerFormProps) => {
           className={errors.phone ? 'border-red-500' : ''}
         />
         {errors.phone && (
-          <p className="text-red-500 text-sm">{errors.phone}</p>
+          <p className="text-red-500 text-xs">{errors.phone}</p>
         )}
       </div>
 
@@ -169,7 +169,7 @@ const NewBuyerForm = ({ onBuyerCreated, onCancel }: NewBuyerFormProps) => {
           className={errors.document ? 'border-red-500' : ''}
         />
         {errors.document && (
-          <p className="text-red-500 text-sm">{errors.document}</p>
+          <p className="text-red-500 text-xs">{errors.document}</p>
         )}
       </div>
 
@@ -183,8 +183,8 @@ const NewBuyerForm = ({ onBuyerCreated, onCancel }: NewBuyerFormProps) => {
         />
       </div>
 
-      <div className="flex justify-end gap-2 pt-4">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
+      <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading} className="bg-white">
           Cancelar
         </Button>
         <Button type="submit" disabled={isLoading}>

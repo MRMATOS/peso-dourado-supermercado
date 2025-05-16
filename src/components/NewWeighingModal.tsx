@@ -25,21 +25,22 @@ const NewWeighingModal = ({
 }: NewWeighingModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Nova Pesagem</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="sm:max-w-[400px] rounded-lg shadow-lg p-0">
+        <DialogHeader className="p-5">
+          <DialogTitle className="text-xl font-semibold text-gray-900">Nova Pesagem</DialogTitle>
+          <DialogDescription className="text-gray-600">
             Existem itens não salvos. O que deseja fazer?
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between sm:space-x-2">
+        <DialogFooter className="p-5 pt-2 flex gap-2 border-t border-gray-100">
           <Button
-            variant="destructive"
+            variant="outline"
             onClick={() => {
               onDiscard();
               onOpenChange(false);
             }}
+            className="bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
           >
             Descartar
           </Button>

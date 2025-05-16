@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -113,10 +114,10 @@ const WeighingForm = () => {
   };
 
   return (
-    <Card>
+    <Card className="rounded-xl shadow-sm">
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Tipo de Pesagem */}
             <div className="space-y-2">
               <Label htmlFor="itemType">Tipo de Pesagem</Label>
@@ -124,7 +125,7 @@ const WeighingForm = () => {
                 value={itemType}
                 onValueChange={setItemType}
               >
-                <SelectTrigger id="itemType">
+                <SelectTrigger id="itemType" className="rounded-lg h-9">
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent>
@@ -141,14 +142,14 @@ const WeighingForm = () => {
             <div className="space-y-2">
               <Label htmlFor="productId">
                 Produto
-                {itemType !== 'Osso' && <span className="text-xs text-muted-foreground ml-1">(Apenas para Osso)</span>}
+                {itemType !== 'Osso' && <span className="text-xs text-gray-500 ml-1">(Apenas para Osso)</span>}
               </Label>
               <Select
                 value={productId || ''}
                 onValueChange={(value) => setProductId(value || null)}
                 disabled={itemType !== 'Osso'}
               >
-                <SelectTrigger id="productId">
+                <SelectTrigger id="productId" className="rounded-lg h-9">
                   <SelectValue placeholder="Selecione o produto" />
                 </SelectTrigger>
                 <SelectContent>
@@ -200,7 +201,7 @@ const WeighingForm = () => {
                 decimalPlaces={3}
                 suffix="kg"
                 disabled
-                className="bg-muted"
+                className="bg-gray-50"
               />
             </div>
 
@@ -214,7 +215,7 @@ const WeighingForm = () => {
                 decimalPlaces={2}
                 prefix="R$"
                 disabled
-                className="bg-muted"
+                className="bg-gray-50"
               />
             </div>
 
@@ -229,17 +230,17 @@ const WeighingForm = () => {
                   decimalPlaces={2}
                   prefix="R$"
                   disabled
-                  className="bg-muted font-bold text-green-600"
+                  className="bg-gray-50 font-bold text-emerald-600"
                 />
               </div>
             </div>
           </div>
 
           {/* Submit Button */}
-          <div className="pt-2">
+          <div className="flex justify-end pt-2">
             <Button 
               type="submit" 
-              className="w-full"
+              className="px-6"
               disabled={!itemType || grossWeightKg <= 0 || (itemType === 'Osso' && !productId)}
             >
               Adicionar

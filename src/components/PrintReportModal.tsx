@@ -42,22 +42,22 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>Imprimir Relatório</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="sm:max-w-[475px] rounded-lg shadow-lg p-0">
+        <DialogHeader className="p-5">
+          <DialogTitle className="text-xl font-semibold text-gray-900">Imprimir Relatório</DialogTitle>
+          <DialogDescription className="text-gray-600">
             Configure as opções de impressão.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 p-5 pt-0">
           <div className="space-y-2">
             <Label htmlFor="buyer">Comprador</Label>
             <Select
               value={selectedBuyerId}
               onValueChange={setSelectedBuyerId}
             >
-              <SelectTrigger id="buyer">
+              <SelectTrigger id="buyer" className="rounded-lg h-9">
                 <SelectValue placeholder="Selecione o comprador" />
               </SelectTrigger>
               <SelectContent>
@@ -70,7 +70,7 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
             </Select>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 pt-2">
             <Checkbox
               id="currentData"
               checked={printOnlyCurrentData}
@@ -78,7 +78,7 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
                 setPrintOnlyCurrentData(checked as boolean)
               }
             />
-            <Label htmlFor="currentData">
+            <Label htmlFor="currentData" className="text-sm text-gray-700">
               Imprimir apenas dados atuais (não salvas)
             </Label>
           </div>
@@ -94,8 +94,8 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="p-5 pt-2 border-t border-gray-100 flex flex-row justify-end gap-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="bg-white">
             Cancelar
           </Button>
           <Button 

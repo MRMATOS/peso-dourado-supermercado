@@ -26,11 +26,11 @@ const WeighingPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+    <div className="container mx-auto px-4 py-6">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-superdall-blue">Sistema de Pesagem</h1>
-          <p className="text-muted-foreground">SuperDallPozo</p>
+          <h1 className="text-2xl font-semibold text-gray-900">Sistema de Pesagem</h1>
+          <p className="text-sm text-gray-600">SuperDallPozo</p>
         </div>
         <div className="flex mt-4 md:mt-0 space-x-2">
           <Button asChild variant="outline" size="sm">
@@ -58,6 +58,7 @@ const WeighingPage = () => {
               variant="outline"
               onClick={() => setPrintModalOpen(true)}
               className="flex items-center"
+              size="default"
             >
               <Printer className="mr-2 h-4 w-4" />
               Imprimir
@@ -66,6 +67,7 @@ const WeighingPage = () => {
               variant="outline"
               onClick={handleNewWeighing}
               className="flex items-center"
+              size="default"
             >
               <Plus className="mr-2 h-4 w-4" />
               Nova Pesagem
@@ -73,6 +75,7 @@ const WeighingPage = () => {
             <Button
               onClick={() => setSaveModalOpen(true)}
               className="flex items-center"
+              size="default"
             >
               <Save className="mr-2 h-4 w-4" />
               Salvar Pesagem

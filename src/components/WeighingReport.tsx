@@ -43,14 +43,14 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
     <div className="p-8 max-w-4xl mx-auto bg-white">
       {/* Header */}
       <div className="text-center mb-6 border-b pb-4">
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-2xl font-semibold text-gray-900">
           Relatório de Pesagem - SuperDallPozo
         </h1>
         <p className="text-sm text-gray-600">
           Data de emissão: {formatDate(new Date())}
         </p>
         {selectedBuyer && (
-          <p className="mt-2 font-medium">
+          <p className="mt-2 font-medium text-gray-800">
             Comprador: {selectedBuyer.name}
             {selectedBuyer.company && ` - ${selectedBuyer.company}`}
           </p>
@@ -68,36 +68,36 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
             
             return (
               <div key={type} className="mb-6">
-                <h2 className="text-xl font-bold mb-2">
+                <h2 className="text-xl font-semibold mb-3 text-gray-800">
                   Relatório de pesagem: {type}
                 </h2>
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border p-2 text-left">Peso Bruto (kg)</th>
-                      <th className="border p-2 text-left">Tara (kg)</th>
-                      <th className="border p-2 text-left">Peso Líquido (kg)</th>
-                      <th className="border p-2 text-left">Preço/kg</th>
-                      <th className="border p-2 text-left">Total</th>
+                    <tr className="bg-gray-50 rounded-t-lg">
+                      <th className="border border-gray-200 p-2 text-left text-gray-700">Peso Bruto (kg)</th>
+                      <th className="border border-gray-200 p-2 text-left text-gray-700">Tara (kg)</th>
+                      <th className="border border-gray-200 p-2 text-left text-gray-700">Peso Líquido (kg)</th>
+                      <th className="border border-gray-200 p-2 text-left text-gray-700">Preço/kg</th>
+                      <th className="border border-gray-200 p-2 text-left text-gray-700">Total</th>
                     </tr>
                   </thead>
                   <tbody>
                     {typeEntries.map((entry, idx) => (
                       <tr key={entry.id} className={(idx % 2 === 0) ? 'bg-white' : 'bg-gray-50'}>
-                        <td className="border p-2">{formatNumber(entry.grossWeightKg)}</td>
-                        <td className="border p-2">{formatNumber(entry.tareKg)}</td>
-                        <td className="border p-2">{formatNumber(entry.netWeightKg)}</td>
-                        <td className="border p-2">{formatCurrency(entry.unitPrice)}</td>
-                        <td className="border p-2">{formatCurrency(entry.totalPrice)}</td>
+                        <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.grossWeightKg)}</td>
+                        <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.tareKg)}</td>
+                        <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.netWeightKg)}</td>
+                        <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(entry.unitPrice)}</td>
+                        <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(entry.totalPrice)}</td>
                       </tr>
                     ))}
-                    <tr className="font-bold bg-gray-100">
-                      <td className="border p-2" colSpan={2}>
+                    <tr className="font-medium bg-gray-100">
+                      <td className="border border-gray-200 p-2 text-gray-700" colSpan={2}>
                         Total de itens: {typeEntries.length}
                       </td>
-                      <td className="border p-2">{formatNumber(typeTotalWeight)}</td>
-                      <td className="border p-2"></td>
-                      <td className="border p-2">{formatCurrency(typeTotalPrice)}</td>
+                      <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(typeTotalWeight)}</td>
+                      <td className="border border-gray-200 p-2"></td>
+                      <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(typeTotalPrice)}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -108,7 +108,7 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
         {/* Osso - Group by product */}
         {ossoEntries.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-xl font-bold mb-2">
+            <h2 className="text-xl font-semibold mb-3 text-gray-800">
               Relatório de pesagem: Osso
             </h2>
             
@@ -118,36 +118,36 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
               
               return (
                 <div key={product} className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">
+                  <h3 className="text-lg font-medium mb-2 text-gray-800">
                     Produto: {product}
                   </h3>
                   <table className="w-full border-collapse">
                     <thead>
-                      <tr className="bg-gray-100">
-                        <th className="border p-2 text-left">Peso Bruto (kg)</th>
-                        <th className="border p-2 text-left">Tara (kg)</th>
-                        <th className="border p-2 text-left">Peso Líquido (kg)</th>
-                        <th className="border p-2 text-left">Preço/kg</th>
-                        <th className="border p-2 text-left">Total</th>
+                      <tr className="bg-gray-50">
+                        <th className="border border-gray-200 p-2 text-left text-gray-700">Peso Bruto (kg)</th>
+                        <th className="border border-gray-200 p-2 text-left text-gray-700">Tara (kg)</th>
+                        <th className="border border-gray-200 p-2 text-left text-gray-700">Peso Líquido (kg)</th>
+                        <th className="border border-gray-200 p-2 text-left text-gray-700">Preço/kg</th>
+                        <th className="border border-gray-200 p-2 text-left text-gray-700">Total</th>
                       </tr>
                     </thead>
                     <tbody>
                       {productEntries.map((entry, idx) => (
                         <tr key={entry.id} className={(idx % 2 === 0) ? 'bg-white' : 'bg-gray-50'}>
-                          <td className="border p-2">{formatNumber(entry.grossWeightKg)}</td>
-                          <td className="border p-2">{formatNumber(entry.tareKg)}</td>
-                          <td className="border p-2">{formatNumber(entry.netWeightKg)}</td>
-                          <td className="border p-2">{formatCurrency(entry.unitPrice)}</td>
-                          <td className="border p-2">{formatCurrency(entry.totalPrice)}</td>
+                          <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.grossWeightKg)}</td>
+                          <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.tareKg)}</td>
+                          <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.netWeightKg)}</td>
+                          <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(entry.unitPrice)}</td>
+                          <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(entry.totalPrice)}</td>
                         </tr>
                       ))}
-                      <tr className="font-bold bg-gray-100">
-                        <td className="border p-2" colSpan={2}>
+                      <tr className="font-medium bg-gray-100">
+                        <td className="border border-gray-200 p-2 text-gray-700" colSpan={2}>
                           Total de itens: {productEntries.length}
                         </td>
-                        <td className="border p-2">{formatNumber(productTotalWeight)}</td>
-                        <td className="border p-2"></td>
-                        <td className="border p-2">{formatCurrency(productTotalPrice)}</td>
+                        <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(productTotalWeight)}</td>
+                        <td className="border border-gray-200 p-2"></td>
+                        <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(productTotalPrice)}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -156,22 +156,22 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
             })}
             
             {/* Osso grand total */}
-            <div className="mt-4 p-2 bg-gray-200 font-bold">
-              <p>Total Osso: {formatNumber(ossoEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0))} kg</p>
-              <p>Valor Total Osso: {formatCurrency(ossoEntries.reduce((sum, entry) => sum + entry.totalPrice, 0))}</p>
+            <div className="mt-4 p-3 bg-gray-100 font-medium rounded">
+              <p className="text-gray-800">Total Osso: {formatNumber(ossoEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0))} kg</p>
+              <p className="text-gray-800">Valor Total Osso: {formatCurrency(ossoEntries.reduce((sum, entry) => sum + entry.totalPrice, 0))}</p>
             </div>
           </div>
         )}
         
         {/* Grand Total */}
         <div className="border-t pt-4 mt-8">
-          <div className="flex justify-between font-bold text-lg">
-            <span>Peso Líquido Total:</span>
-            <span>{formatNumber(totalNetWeight)} kg</span>
+          <div className="flex justify-between font-medium text-lg">
+            <span className="text-gray-700">Peso Líquido Total:</span>
+            <span className="text-gray-900">{formatNumber(totalNetWeight)} kg</span>
           </div>
-          <div className="flex justify-between font-bold text-xl mt-2">
-            <span>Valor Total:</span>
-            <span>{formatCurrency(totalPrice)}</span>
+          <div className="flex justify-between font-semibold text-xl mt-2">
+            <span className="text-gray-700">Valor Total:</span>
+            <span className="text-emerald-600">{formatCurrency(totalPrice)}</span>
           </div>
         </div>
       </div>
