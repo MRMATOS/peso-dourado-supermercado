@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Buyer, 
@@ -29,10 +28,10 @@ export async function createBuyer(buyer: Omit<Buyer, 'id' | 'created_at'>) {
     .single();
     
   if (error) throw error;
-  return data;
+  return data as Buyer;
 }
 
-export async function updateBuyer(id: number, buyer: Partial<Buyer>) {
+export async function updateBuyer(id: string, buyer: Partial<Buyer>) {
   const { data, error } = await supabase
     .from('buyers')
     .update(buyer)
@@ -41,10 +40,10 @@ export async function updateBuyer(id: number, buyer: Partial<Buyer>) {
     .single();
     
   if (error) throw error;
-  return data;
+  return data as Buyer;
 }
 
-export async function deleteBuyer(id: number) {
+export async function deleteBuyer(id: string) {
   const { error } = await supabase
     .from('buyers')
     .delete()
@@ -99,7 +98,7 @@ export async function createProduct(product: Omit<Product, 'id' | 'created_at'>)
   return data;
 }
 
-export async function updateProduct(id: number, product: Partial<Product>) {
+export async function updateProduct(id: string, product: Partial<Product>) {
   const { data, error } = await supabase
     .from('products')
     .update(product)
@@ -108,10 +107,10 @@ export async function updateProduct(id: number, product: Partial<Product>) {
     .single();
     
   if (error) throw error;
-  return data;
+  return data as Product;
 }
 
-export async function deleteProduct(id: number) {
+export async function deleteProduct(id: string) {
   const { error } = await supabase
     .from('products')
     .delete()
@@ -142,7 +141,7 @@ export async function createUnitPrice(unitPrice: Omit<UnitPrice, 'id' | 'created
   return data;
 }
 
-export async function updateUnitPrice(id: number, unitPrice: Partial<UnitPrice>) {
+export async function updateUnitPrice(id: string, unitPrice: Partial<UnitPrice>) {
   const { data, error } = await supabase
     .from('unit_prices')
     .update(unitPrice)
@@ -151,10 +150,10 @@ export async function updateUnitPrice(id: number, unitPrice: Partial<UnitPrice>)
     .single();
     
   if (error) throw error;
-  return data;
+  return data as UnitPrice;
 }
 
-export async function deleteUnitPrice(id: number) {
+export async function deleteUnitPrice(id: string) {
   const { error } = await supabase
     .from('unit_prices')
     .delete()
@@ -185,7 +184,7 @@ export async function createTareWeight(tareWeight: Omit<TareWeight, 'id' | 'crea
   return data;
 }
 
-export async function updateTareWeight(id: number, tareWeight: Partial<TareWeight>) {
+export async function updateTareWeight(id: string, tareWeight: Partial<TareWeight>) {
   const { data, error } = await supabase
     .from('tare_weights')
     .update(tareWeight)
@@ -194,10 +193,10 @@ export async function updateTareWeight(id: number, tareWeight: Partial<TareWeigh
     .single();
     
   if (error) throw error;
-  return data;
+  return data as TareWeight;
 }
 
-export async function deleteTareWeight(id: number) {
+export async function deleteTareWeight(id: string) {
   const { error } = await supabase
     .from('tare_weights')
     .delete()
@@ -210,7 +209,7 @@ export async function deleteTareWeight(id: number) {
 export async function getWeighings(options?: {
   startDate?: Date; 
   endDate?: Date;
-  buyerId?: number;
+  buyerId?: string;
 }) {
   let query = supabase
     .from('weighings')

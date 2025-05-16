@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from 'sonner';
-import supabase from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import {
   UnitPrice,
   TareWeight,
@@ -15,7 +14,7 @@ import {
 interface WeighingEntryForm {
   id: string;
   itemType: string;
-  productId?: number | null;
+  productId?: string | null;
   productDescription?: string;
   grossWeightKg: number;
   tareKg: number;
@@ -47,7 +46,7 @@ interface WeighingContextType {
   settings: Settings | null;
   
   // Saving
-  saveWeighing: (buyerId: number) => Promise<boolean>;
+  saveWeighing: (buyerId: string) => Promise<boolean>;
   
   // Loading state
   isLoading: boolean;
@@ -181,7 +180,7 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
   });
   
   // Save weighing
-  const saveWeighing = async (buyerId: number): Promise<boolean> => {
+  const saveWeighing = async (buyerId: string): Promise<boolean> => {
     if (currentEntries.length === 0) {
       toast.error('Nenhum item para salvar');
       return false;

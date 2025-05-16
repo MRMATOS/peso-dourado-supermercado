@@ -86,6 +86,7 @@ const NewBuyerForm = ({ onBuyerCreated, onCancel }: NewBuyerFormProps) => {
     try {
       const isValid = await validate();
       if (!isValid) {
+        setIsLoading(false);
         return;
       }
 
@@ -103,7 +104,7 @@ const NewBuyerForm = ({ onBuyerCreated, onCancel }: NewBuyerFormProps) => {
       if (error) throw error;
 
       toast.success('Comprador cadastrado com sucesso');
-      onBuyerCreated(data);
+      onBuyerCreated(data as Buyer);
     } catch (error) {
       console.error('Error creating buyer:', error);
       toast.error('Erro ao cadastrar comprador');

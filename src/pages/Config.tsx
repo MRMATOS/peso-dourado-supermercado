@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { WeighingProvider } from '@/contexts/WeighingContext';
@@ -86,33 +85,33 @@ const ConfigPage = () => {
         switch (activeTab) {
           case 'types':
             const unitPricesData = await getUnitPrices();
-            setUnitPrices(unitPricesData);
+            setUnitPrices(unitPricesData as UnitPrice[]);
             break;
             
           case 'products':
             const productsData = await getProducts();
-            setProducts(productsData);
+            setProducts(productsData as Product[]);
             
             const unitPricesForDropdown = await getUnitPrices();
-            setUnitPrices(unitPricesForDropdown);
+            setUnitPrices(unitPricesForDropdown as UnitPrice[]);
             break;
             
           case 'tare':
             const tareWeightsData = await getTareWeights();
-            setTareWeights(tareWeightsData);
+            setTareWeights(tareWeightsData as TareWeight[]);
             
             const unitPricesForTare = await getUnitPrices();
-            setUnitPrices(unitPricesForTare);
+            setUnitPrices(unitPricesForTare as UnitPrice[]);
             break;
             
           case 'buyers':
             const buyersData = await getBuyers();
-            setBuyers(buyersData);
+            setBuyers(buyersData as Buyer[]);
             break;
             
           case 'report':
             const settingsData = await getSettings();
-            setSettings(settingsData);
+            setSettings(settingsData as Settings | null);
             setReportFooter1(settingsData?.report_footer1 || '');
             setReportFooter2(settingsData?.report_footer2 || '');
             break;
@@ -156,7 +155,7 @@ const ConfigPage = () => {
         price: newUnitPrice
       });
       
-      setUnitPrices([...unitPrices, newUnitPriceItem]);
+      setUnitPrices([...unitPrices, newUnitPriceItem as UnitPrice]);
       setNewItemType('');
       setNewUnitPrice(0);
       
@@ -169,14 +168,14 @@ const ConfigPage = () => {
     }
   };
   
-  const handleUpdateItemType = async (id: number, price: number) => {
+  const handleUpdateItemType = async (id: string, price: number) => {
     setIsLoading(true);
     
     try {
       const updatedUnitPrice = await updateUnitPrice(id, { price });
       
       setUnitPrices(unitPrices.map(up => 
-        up.id === id ? updatedUnitPrice : up
+        up.id === id ? updatedUnitPrice as UnitPrice : up
       ));
       
       toast.success('Preço atualizado com sucesso');
@@ -188,7 +187,7 @@ const ConfigPage = () => {
     }
   };
   
-  const handleDeleteItemType = async (id: number) => {
+  const handleDeleteItemType = async (id: string) => {
     if (!window.confirm('Tem certeza que deseja excluir este tipo de pesagem?')) {
       return;
     }
@@ -260,7 +259,7 @@ const ConfigPage = () => {
     }
   };
   
-  const handleUpdateProduct = async (id: number, updatedData: Partial<Product>) => {
+  const handleUpdateProduct = async (id: string, updatedData: Partial<Product>) => {
     setIsLoading(true);
     
     try {
@@ -279,7 +278,7 @@ const ConfigPage = () => {
     }
   };
   
-  const handleDeleteProduct = async (id: number) => {
+  const handleDeleteProduct = async (id: string) => {
     if (!window.confirm('Tem certeza que deseja excluir este produto?')) {
       return;
     }
@@ -341,7 +340,7 @@ const ConfigPage = () => {
     }
   };
   
-  const handleUpdateTareWeight = async (id: number, tare_kg: number) => {
+  const handleUpdateTareWeight = async (id: string, tare_kg: number) => {
     setIsLoading(true);
     
     try {
@@ -360,7 +359,7 @@ const ConfigPage = () => {
     }
   };
   
-  const handleDeleteTareWeight = async (id: number) => {
+  const handleDeleteTareWeight = async (id: string) => {
     if (!window.confirm('Tem certeza que deseja excluir esta tara?')) {
       return;
     }
@@ -456,7 +455,7 @@ const ConfigPage = () => {
     }
   };
   
-  const handleUpdateBuyer = async (id: number, updatedData: Partial<Buyer>) => {
+  const handleUpdateBuyer = async (id: string, updatedData: Partial<Buyer>) => {
     setIsLoading(true);
     
     try {
@@ -475,7 +474,7 @@ const ConfigPage = () => {
     }
   };
   
-  const handleDeleteBuyer = async (id: number) => {
+  const handleDeleteBuyer = async (id: string) => {
     if (!window.confirm('Tem certeza que deseja excluir este comprador?')) {
       return;
     }

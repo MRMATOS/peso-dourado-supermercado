@@ -1,15 +1,15 @@
 
 export interface Buyer {
-  id: number;
+  id: string;
   name: string;
   phone: string;
-  document?: string;
-  company?: string;
+  document?: string | null;
+  company?: string | null;
   created_at?: string;
 }
 
 export interface Product {
-  id: number;
+  id: string;
   code: string;
   description: string;
   item_type: string;
@@ -17,32 +17,32 @@ export interface Product {
 }
 
 export interface TareWeight {
-  id: number;
+  id: string;
   item_type: string;
   tare_kg: number;
   created_at?: string;
 }
 
 export interface UnitPrice {
-  id: number;
+  id: string;
   item_type: string;
   price: number;
   created_at?: string;
 }
 
 export interface Weighing {
-  id: number;
-  buyer_id: number;
+  id: string;
+  buyer_id: string;
   total_weight_kg: number;
   total_price: number;
   created_at: string;
 }
 
 export interface WeighingEntry {
-  id: number;
-  weighing_id: number;
+  id: string;
+  weighing_id: string;
   item_type: string;
-  product_id?: number;
+  product_id?: string | null;
   gross_weight_kg: number;
   tare_kg: number;
   net_weight_kg: number;
@@ -65,7 +65,9 @@ export interface WeighingEntryForm {
 }
 
 export interface Settings {
-  id: number;
+  id: string;
   report_footer1: string;
   report_footer2: string;
+  tab1_name?: string;
+  tab2_name?: string;
 }
