@@ -340,7 +340,7 @@ const HistoryPage = () => {
                         )}
                       </td>
                       <td className="p-2 text-right">
-                        {formatNumber(weighing.total_weight_kg)}
+                        {formatNumber(weighing.total_kg)}
                       </td>
                       <td className="p-2 text-right font-medium">
                         {formatCurrency(weighing.total_price)}
