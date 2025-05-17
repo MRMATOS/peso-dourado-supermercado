@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
 import {
   Dialog,
@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import NewBuyerForm from '@/components/NewBuyerForm';
 import { formatCurrency, formatNumber } from '@/lib/utils';
+import { Buyer } from '@/types/database';
 
 interface SaveWeighingModalProps {
   open: boolean;
@@ -36,10 +37,19 @@ const SaveWeighingModal = ({ open, onOpenChange }: SaveWeighingModalProps) => {
 
   const [selectedBuyerId, setSelectedBuyerId] = useState<string>('');
   const [showNewBuyerForm, setShowNewBuyerForm] = useState(false);
+  const [newlyCreatedBuyer, setNewlyCreatedBuyer] = useState<Buyer | null>(null);
 
   // Calculate summary data
   const totalWeight = currentEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0);
   const totalPrice = currentEntries.reduce((sum, entry) => sum + entry.totalPrice, 0);
+
+  // Set the newly created buyer as selected when returning from the form
+  useEffect(() => {
+    if (newlyCreatedBuyer && newlyCreatedBuyer.id) {
+      setSelectedBuyerId(newlyCreatedBuyer.id.toString());
+      setNewlyCreatedBuyer(null);
+    }
+  }, [newlyCreatedBuyer]);
 
   const handleSave = async () => {
     if (!selectedBuyerId) {
@@ -51,6 +61,11 @@ const SaveWeighingModal = ({ open, onOpenChange }: SaveWeighingModalProps) => {
     if (success) {
       onOpenChange(false);
     }
+  };
+
+  const handleBuyerCreated = (newBuyer: Buyer) => {
+    setNewlyCreatedBuyer(newBuyer);
+    setShowNewBuyerForm(false);
   };
 
   return (
@@ -65,10 +80,7 @@ const SaveWeighingModal = ({ open, onOpenChange }: SaveWeighingModalProps) => {
 
         {showNewBuyerForm ? (
           <NewBuyerForm 
-            onBuyerCreated={(newBuyer) => {
-              setSelectedBuyerId(newBuyer.id.toString());
-              setShowNewBuyerForm(false);
-            }}
+            onBuyerCreated={handleBuyerCreated}
             onCancel={() => setShowNewBuyerForm(false)}
           />
         ) : (
@@ -107,7 +119,7 @@ const SaveWeighingModal = ({ open, onOpenChange }: SaveWeighingModalProps) => {
                   </div>
                   <div>
                     <p className="text-gray-500">Peso total:</p>
-                    <p className="font-medium text-gray-900">{formatNumber(totalWeight)} kg</p>
+                    <p className="font-medium text-gray-900">{formatNumber(totalWeight, 2)} kg</p>
                   </div>
                   <div className="col-span-2">
                     <p className="text-gray-500">Valor total:</p>

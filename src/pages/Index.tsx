@@ -7,8 +7,8 @@ import EntriesList from '@/components/EntriesList';
 import SaveWeighingModal from '@/components/SaveWeighingModal';
 import PrintReportModal from '@/components/PrintReportModal';
 import NewWeighingModal from '@/components/NewWeighingModal';
+import { History, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Printer, Save, Plus, History, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const WeighingPage = () => {
@@ -23,6 +23,14 @@ const WeighingPage = () => {
     } else {
       clearEntries();
     }
+  };
+
+  const handlePrint = () => {
+    setPrintModalOpen(true);
+  };
+
+  const handleSave = () => {
+    setSaveModalOpen(true);
   };
 
   return (
@@ -51,89 +59,33 @@ const WeighingPage = () => {
       <main className="space-y-6">
         <WeighingForm />
 
-        {/* Action buttons above the entries list */}
-        <div className="flex justify-end space-x-2">
-          <Button 
-            variant="outline" 
-            onClick={() => setPrintModalOpen(true)}
-            disabled={currentEntries.length === 0}
-            size="sm"
-          >
-            <Printer className="mr-2 h-4 w-4" />
-            Imprimir
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => setSaveModalOpen(true)}
-            disabled={currentEntries.length === 0}
-            size="sm"
-          >
-            <Save className="mr-2 h-4 w-4" />
-            Salvar Pesagem
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={handleNewWeighing}
-            size="sm"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Nova Pesagem
-          </Button>
-        </div>
+        <EntriesList 
+          onPrint={handlePrint}
+          onSave={handleSave}
+          onNew={handleNewWeighing}
+        />
 
-        <EntriesList />
+        <SaveWeighingModal
+          open={saveModalOpen}
+          onOpenChange={setSaveModalOpen}
+        />
 
-        {/* Action buttons below the entries list */}
-        <div className="flex justify-end space-x-2 mt-4">
-          <Button 
-            variant="outline" 
-            onClick={() => setPrintModalOpen(true)}
-            disabled={currentEntries.length === 0}
-            size="sm"
-          >
-            <Printer className="mr-2 h-4 w-4" />
-            Imprimir
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => setSaveModalOpen(true)}
-            disabled={currentEntries.length === 0}
-            size="sm"
-          >
-            <Save className="mr-2 h-4 w-4" />
-            Salvar Pesagem
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={handleNewWeighing}
-            size="sm"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Nova Pesagem
-          </Button>
-        </div>
+        <PrintReportModal
+          open={printModalOpen}
+          onOpenChange={setPrintModalOpen}
+        />
+
+        <NewWeighingModal
+          open={newWeighingModalOpen}
+          onOpenChange={setNewWeighingModalOpen}
+          onDiscard={() => {
+            clearEntries();
+          }}
+          onSave={() => {
+            setSaveModalOpen(true);
+          }}
+        />
       </main>
-
-      <SaveWeighingModal
-        open={saveModalOpen}
-        onOpenChange={setSaveModalOpen}
-      />
-
-      <PrintReportModal
-        open={printModalOpen}
-        onOpenChange={setPrintModalOpen}
-      />
-
-      <NewWeighingModal
-        open={newWeighingModalOpen}
-        onOpenChange={setNewWeighingModalOpen}
-        onDiscard={() => {
-          clearEntries();
-        }}
-        onSave={() => {
-          setSaveModalOpen(true);
-        }}
-      />
     </div>
   );
 };

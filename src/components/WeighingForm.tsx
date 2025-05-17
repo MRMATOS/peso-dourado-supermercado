@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent, useRef } from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -32,6 +32,9 @@ const WeighingForm = () => {
   const [netWeightKg, setNetWeightKg] = useState<number>(0);
   const [unitPrice, setUnitPrice] = useState<number>(0);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  
+  // Ref for the gross weight input so we can focus it after adding
+  const grossWeightInputRef = useRef<HTMLInputElement>(null);
 
   // Filter products by selected item type
   const filteredProducts = products.filter(product => product.item_type === itemType);
@@ -98,6 +101,17 @@ const WeighingForm = () => {
     
     // Only reset the gross weight - keeping itemType and productId
     setGrossWeightKg(0);
+    
+    // Focus the gross weight input for the next entry
+    if (grossWeightInputRef.current) {
+      grossWeightInputRef.current.focus();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubmit(e as unknown as FormEvent);
+    }
   };
 
   return (
@@ -161,6 +175,8 @@ const WeighingForm = () => {
                 className="input-weight"
                 suffix="kg"
                 clearOnFocus
+                ref={grossWeightInputRef}
+                onKeyDown={handleKeyDown}
               />
             </div>
 
@@ -210,7 +226,7 @@ const WeighingForm = () => {
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="totalPrice">Preço Total</Label>
               <div className="flex items-center gap-4">
-                <div className="w-1/3">
+                <div className="w-1/4 md:w-1/6">
                   <NumberInput
                     id="totalPrice"
                     value={totalPrice}

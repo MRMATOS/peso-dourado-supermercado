@@ -199,7 +199,8 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
       const weighingEntries = currentEntries.map(entry => ({
         weighing_id: weighingData.id,
         item_type: entry.itemType,
-        product_id: entry.productId || null,
+        // Only include product_id if it's not null or undefined
+        ...(entry.productId ? { product_id: entry.productId } : {}),
         gross_weight: entry.grossWeightKg,
         tare_used: entry.tareKg,
         net_weight: entry.netWeightKg,
@@ -214,7 +215,8 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
       if (entriesError) throw entriesError;
       
       toast.success('Pesagem salva com sucesso');
-      clearEntries();
+      // We don't clear entries anymore, keeping them on screen
+      // clearEntries();
       return true;
     } catch (error) {
       console.error('Error saving weighing:', error);

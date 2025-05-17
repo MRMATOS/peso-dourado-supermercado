@@ -60,7 +60,7 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
         )}
       </div>
 
-      {/* Content */}
+      {/* Content - Only Totals */}
       <div className="space-y-6">
         {/* Group by item type */}
         {Object.entries(entriesByType)
@@ -72,38 +72,24 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
             return (
               <div key={type} className="mb-6">
                 <h2 className="text-xl font-semibold mb-3 text-gray-800">
-                  Relatório de pesagem: {type}
+                  Resumo de {type}
                 </h2>
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50 rounded-t-lg">
-                      <th className="border border-gray-200 p-2 text-left text-gray-700">Peso Bruto (kg)</th>
-                      <th className="border border-gray-200 p-2 text-left text-gray-700">Tara (kg)</th>
-                      <th className="border border-gray-200 p-2 text-left text-gray-700">Peso Líquido (kg)</th>
-                      <th className="border border-gray-200 p-2 text-left text-gray-700">Preço/kg</th>
-                      <th className="border border-gray-200 p-2 text-left text-gray-700">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {typeEntries.map((entry, idx) => (
-                      <tr key={entry.id} className={(idx % 2 === 0) ? 'bg-white' : 'bg-gray-50'}>
-                        <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.grossWeightKg)}</td>
-                        <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.tareKg)}</td>
-                        <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.netWeightKg)}</td>
-                        <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(entry.unitPrice)}</td>
-                        <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(entry.totalPrice)}</td>
-                      </tr>
-                    ))}
-                    <tr className="font-medium bg-gray-100">
-                      <td className="border border-gray-200 p-2 text-gray-700" colSpan={2}>
-                        Total de itens: {typeEntries.length}
-                      </td>
-                      <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(typeTotalWeight)}</td>
-                      <td className="border border-gray-200 p-2"></td>
-                      <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(typeTotalPrice)}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div className="p-4 border rounded-lg bg-gray-50">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-gray-600">Quantidade de itens:</p>
+                      <p className="text-lg font-semibold">{typeEntries.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600">Peso total:</p>
+                      <p className="text-lg font-semibold">{formatNumber(typeTotalWeight, 2)} kg</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-gray-600">Valor total:</p>
+                      <p className="text-xl font-bold text-emerald-600">{formatCurrency(typeTotalPrice)}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             );
           })}
@@ -112,7 +98,7 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
         {ossoEntries.length > 0 && (
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-3 text-gray-800">
-              Relatório de pesagem: Osso
+              Resumo de Osso
             </h2>
             
             {Object.entries(ossoEntriesByProduct).map(([product, productEntries]) => {
@@ -120,47 +106,31 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
               const productTotalPrice = productEntries.reduce((sum, entry) => sum + entry.totalPrice, 0);
               
               return (
-                <div key={product} className="mb-4">
+                <div key={product} className="mb-4 p-4 border rounded-lg bg-gray-50">
                   <h3 className="text-lg font-medium mb-2 text-gray-800">
                     Produto: {product}
                   </h3>
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="border border-gray-200 p-2 text-left text-gray-700">Peso Bruto (kg)</th>
-                        <th className="border border-gray-200 p-2 text-left text-gray-700">Tara (kg)</th>
-                        <th className="border border-gray-200 p-2 text-left text-gray-700">Peso Líquido (kg)</th>
-                        <th className="border border-gray-200 p-2 text-left text-gray-700">Preço/kg</th>
-                        <th className="border border-gray-200 p-2 text-left text-gray-700">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {productEntries.map((entry, idx) => (
-                        <tr key={entry.id} className={(idx % 2 === 0) ? 'bg-white' : 'bg-gray-50'}>
-                          <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.grossWeightKg)}</td>
-                          <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.tareKg)}</td>
-                          <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(entry.netWeightKg)}</td>
-                          <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(entry.unitPrice)}</td>
-                          <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(entry.totalPrice)}</td>
-                        </tr>
-                      ))}
-                      <tr className="font-medium bg-gray-100">
-                        <td className="border border-gray-200 p-2 text-gray-700" colSpan={2}>
-                          Total de itens: {productEntries.length}
-                        </td>
-                        <td className="border border-gray-200 p-2 text-gray-800">{formatNumber(productTotalWeight)}</td>
-                        <td className="border border-gray-200 p-2"></td>
-                        <td className="border border-gray-200 p-2 text-gray-800">{formatCurrency(productTotalPrice)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-gray-600">Quantidade de itens:</p>
+                      <p className="text-lg font-semibold">{productEntries.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600">Peso total:</p>
+                      <p className="text-lg font-semibold">{formatNumber(productTotalWeight, 2)} kg</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-gray-600">Valor total:</p>
+                      <p className="text-xl font-bold text-emerald-600">{formatCurrency(productTotalPrice)}</p>
+                    </div>
+                  </div>
                 </div>
               );
             })}
             
             {/* Osso grand total */}
-            <div className="mt-4 p-3 bg-gray-100 font-medium rounded">
-              <p className="text-gray-800">Total Osso: {formatNumber(ossoEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0))} kg</p>
+            <div className="mt-4 p-4 bg-gray-100 font-medium rounded">
+              <p className="text-gray-800">Total Osso: {formatNumber(ossoEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0), 2)} kg</p>
               <p className="text-gray-800">Valor Total Osso: {formatCurrency(ossoEntries.reduce((sum, entry) => sum + entry.totalPrice, 0))}</p>
             </div>
           </div>
@@ -170,7 +140,7 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
         <div className="border-t pt-4 mt-8">
           <div className="flex justify-between font-medium text-lg">
             <span className="text-gray-700">Peso Líquido Total:</span>
-            <span className="text-gray-900">{formatNumber(totalNetWeight)} kg</span>
+            <span className="text-gray-900">{formatNumber(totalNetWeight, 2)} kg</span>
           </div>
           <div className="flex justify-between font-semibold text-xl mt-2">
             <span className="text-gray-700">Valor Total:</span>
