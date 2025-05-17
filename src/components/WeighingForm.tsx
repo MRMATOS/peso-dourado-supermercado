@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -209,7 +210,7 @@ const WeighingForm = () => {
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="totalPrice">Preço Total</Label>
               <div className="flex items-center gap-4">
-                <div className="flex-1">
+                <div className="w-1/3">
                   <NumberInput
                     id="totalPrice"
                     value={totalPrice}
@@ -220,13 +221,15 @@ const WeighingForm = () => {
                     className="bg-gray-50 font-bold text-emerald-600"
                   />
                 </div>
-                <Button 
-                  type="submit" 
-                  className="px-6 whitespace-nowrap"
-                  disabled={!itemType || grossWeightKg <= 0 || (itemType === 'Osso' && !productId)}
-                >
-                  Adicionar
-                </Button>
+                <div className="flex-1 flex justify-end">
+                  <Button 
+                    type="submit" 
+                    className="px-6 whitespace-nowrap"
+                    disabled={!itemType || grossWeightKg <= 0 || (itemType === 'Osso' && !productId)}
+                  >
+                    Adicionar
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

@@ -50,7 +50,68 @@ const WeighingPage = () => {
 
       <main className="space-y-6">
         <WeighingForm />
+
+        {/* Action buttons above the entries list */}
+        <div className="flex justify-end space-x-2">
+          <Button 
+            variant="outline" 
+            onClick={() => setPrintModalOpen(true)}
+            disabled={currentEntries.length === 0}
+            size="sm"
+          >
+            <Printer className="mr-2 h-4 w-4" />
+            Imprimir
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => setSaveModalOpen(true)}
+            disabled={currentEntries.length === 0}
+            size="sm"
+          >
+            <Save className="mr-2 h-4 w-4" />
+            Salvar Pesagem
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={handleNewWeighing}
+            size="sm"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Nova Pesagem
+          </Button>
+        </div>
+
         <EntriesList />
+
+        {/* Action buttons below the entries list */}
+        <div className="flex justify-end space-x-2 mt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setPrintModalOpen(true)}
+            disabled={currentEntries.length === 0}
+            size="sm"
+          >
+            <Printer className="mr-2 h-4 w-4" />
+            Imprimir
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => setSaveModalOpen(true)}
+            disabled={currentEntries.length === 0}
+            size="sm"
+          >
+            <Save className="mr-2 h-4 w-4" />
+            Salvar Pesagem
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={handleNewWeighing}
+            size="sm"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Nova Pesagem
+          </Button>
+        </div>
       </main>
 
       <SaveWeighingModal

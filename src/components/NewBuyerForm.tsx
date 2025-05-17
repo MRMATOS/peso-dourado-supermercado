@@ -187,7 +187,7 @@ const NewBuyerForm = ({ onBuyerCreated, onCancel }: NewBuyerFormProps) => {
         <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading} className="bg-white">
           Cancelar
         </Button>
-        <Button type="submit" disabled={isLoading}>
+        <Button type="submit" disabled={isLoading} className="px-4 py-2">
           {isLoading ? 'Salvando...' : 'Salvar'}
         </Button>
       </div>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
-import { formatCurrency, formatDate, formatNumber } from '@/lib/utils';
+import { formatCurrency, formatDate, formatNumber, formatPhone, formatDocument } from '@/lib/utils';
 import { WeighingEntryForm } from '@/types/database';
 
 interface WeighingReportProps {
@@ -44,16 +44,19 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
       {/* Header */}
       <div className="text-center mb-6 border-b pb-4">
         <h1 className="text-2xl font-semibold text-gray-900">
-          Relatório de Pesagem - SuperDallPozo
+          Relatório de Pesagem - Super Dal Pozzo
         </h1>
         <p className="text-sm text-gray-600">
           Data de emissão: {formatDate(new Date())}
         </p>
         {selectedBuyer && (
-          <p className="mt-2 font-medium text-gray-800">
-            Comprador: {selectedBuyer.name}
-            {selectedBuyer.company && ` - ${selectedBuyer.company}`}
-          </p>
+          <div className="mt-4 p-4 border rounded-lg bg-gray-50 text-left">
+            <h3 className="text-lg font-medium mb-2">Dados do Comprador:</h3>
+            <p className="mb-1"><strong>Nome:</strong> {selectedBuyer.name}</p>
+            {selectedBuyer.phone && <p className="mb-1"><strong>Telefone:</strong> {formatPhone(selectedBuyer.phone)}</p>}
+            {selectedBuyer.document && <p className="mb-1"><strong>Documento:</strong> {formatDocument(selectedBuyer.document)}</p>}
+            {selectedBuyer.company && <p className="mb-1"><strong>Empresa:</strong> {selectedBuyer.company}</p>}
+          </div>
         )}
       </div>
 
