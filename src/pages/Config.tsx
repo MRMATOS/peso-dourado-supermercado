@@ -520,8 +520,8 @@ const ConfigPage = () => {
     <div className="container mx-auto px-4 py-8">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-superdall-blue">Configurações</h1>
-          <p className="text-muted-foreground">SuperDallPozo</p>
+          <h1 className="text-3xl font-bold" style={{ color: "#3A86F7" }}>Configurações</h1>
+          <p className="text-muted-foreground">Super Dal Pozzo</p>
         </div>
         <div className="flex mt-4 md:mt-0 space-x-2">
           <Button asChild variant="outline" size="sm">
@@ -545,18 +545,18 @@ const ConfigPage = () => {
         className="space-y-4"
       >
         <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          <TabsTrigger value="types">Tipos de Pesagem</TabsTrigger>
-          <TabsTrigger value="products">Produtos</TabsTrigger>
-          <TabsTrigger value="tare">Taras</TabsTrigger>
-          <TabsTrigger value="buyers">Compradores</TabsTrigger>
-          <TabsTrigger value="report">Rodapé Relatório</TabsTrigger>
+          <TabsTrigger value="types" className="text-[#3A86F7]">Tipos de Pesagem</TabsTrigger>
+          <TabsTrigger value="products" className="text-[#3A86F7]">Produtos</TabsTrigger>
+          <TabsTrigger value="tare" className="text-[#3A86F7]">Taras</TabsTrigger>
+          <TabsTrigger value="buyers" className="text-[#3A86F7]">Compradores</TabsTrigger>
+          <TabsTrigger value="report" className="text-[#3A86F7]">Rodapé Relatório</TabsTrigger>
         </TabsList>
 
         {/* Types of Weighing */}
         <TabsContent value="types" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Cadastro de Tipos de Pesagem</CardTitle>
+              <CardTitle style={{ color: "#3A86F7" }}>Cadastro de Tipos de Pesagem</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_auto] gap-4 items-end mb-6">
@@ -649,7 +649,7 @@ const ConfigPage = () => {
         <TabsContent value="products" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Cadastro de Produtos</CardTitle>
+              <CardTitle style={{ color: "#3A86F7" }}>Cadastro de Produtos</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr_auto] gap-4 items-end mb-6">
@@ -781,7 +781,7 @@ const ConfigPage = () => {
         <TabsContent value="tare" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Cadastro de Taras</CardTitle>
+              <CardTitle style={{ color: "#3A86F7" }}>Cadastro de Taras</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_auto] gap-4 items-end mb-6">
@@ -883,7 +883,7 @@ const ConfigPage = () => {
         <TabsContent value="buyers" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Cadastro de Compradores</CardTitle>
+              <CardTitle style={{ color: "#3A86F7" }}>Cadastro de Compradores</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -929,7 +929,7 @@ const ConfigPage = () => {
                     placeholder="Nome da empresa (opcional)"
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 flex justify-end">
                   <Button 
                     onClick={handleAddBuyer}
                     disabled={
@@ -938,7 +938,8 @@ const ConfigPage = () => {
                       !newBuyerPhone.trim() || 
                       (newBuyerDocument && !validateDocument(newBuyerDocument))
                     }
-                    className="w-full flex items-center justify-center"
+                    size="sm"
+                    className="flex items-center"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Adicionar Comprador
@@ -1027,7 +1028,7 @@ const ConfigPage = () => {
         <TabsContent value="report" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Configurações do Rodapé do Relatório</CardTitle>
+              <CardTitle style={{ color: "#3A86F7" }}>Configurações do Rodapé do Relatório</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -1049,14 +1050,17 @@ const ConfigPage = () => {
                     placeholder="Texto da segunda linha do rodapé"
                   />
                 </div>
-                <Button 
-                  onClick={handleSaveReportSettings}
-                  disabled={isLoading}
-                  className="w-full mt-4 flex items-center justify-center"
-                >
-                  <Save className="mr-2 h-4 w-4" />
-                  Salvar Configurações
-                </Button>
+                <div className="flex justify-end mt-4">
+                  <Button 
+                    onClick={handleSaveReportSettings}
+                    disabled={isLoading}
+                    size="sm"
+                    className="flex items-center"
+                  >
+                    <Save className="mr-2 h-4 w-4" />
+                    Salvar Configurações
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
