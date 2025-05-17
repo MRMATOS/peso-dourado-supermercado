@@ -80,9 +80,11 @@ const WeighingPage = () => {
           onOpenChange={setNewWeighingModalOpen}
           onDiscard={() => {
             clearEntries();
+            setNewWeighingModalOpen(false);
           }}
           onSave={() => {
             setSaveModalOpen(true);
+            setNewWeighingModalOpen(false);
           }}
         />
       </main>

@@ -130,12 +130,13 @@ const SaveWeighingModal = ({ open, onOpenChange }: SaveWeighingModalProps) => {
             </div>
 
             <DialogFooter className="p-6 pt-2 border-t border-gray-100 flex flex-row justify-end gap-2">
-              <Button variant="outline" onClick={() => onOpenChange(false)} className="bg-white">
+              <Button variant="outline" onClick={() => onOpenChange(false)} className="bg-white" size="sm">
                 Cancelar
               </Button>
               <Button 
                 onClick={handleSave} 
                 disabled={!selectedBuyerId || isSaving}
+                size="sm"
               >
                 {isSaving ? 'Salvando...' : 'Confirmar'}
               </Button>

@@ -95,12 +95,13 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
         </div>
 
         <DialogFooter className="p-5 pt-2 border-t border-gray-100 flex flex-row justify-end gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="bg-white">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="bg-white" size="sm">
             Cancelar
           </Button>
           <Button 
             onClick={handlePrint}
             disabled={currentEntries.length === 0}
+            size="sm"
           >
             Imprimir
           </Button>

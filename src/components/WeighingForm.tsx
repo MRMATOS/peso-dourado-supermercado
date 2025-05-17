@@ -214,11 +214,11 @@ const WeighingForm = () => {
               <NumberInput
                 id="unitPrice"
                 value={unitPrice}
-                onChange={() => {}} // Read-only
+                onChange={setUnitPrice}
                 decimalPlaces={2}
                 prefix="R$"
-                disabled
-                className="bg-gray-50"
+                disabled={!itemType}
+                className={!itemType ? "bg-gray-50" : ""}
               />
             </div>
 
@@ -241,6 +241,7 @@ const WeighingForm = () => {
                   <Button 
                     type="submit" 
                     className="px-6 whitespace-nowrap"
+                    size="sm"
                     disabled={!itemType || grossWeightKg <= 0 || (itemType === 'Osso' && !productId)}
                   >
                     Adicionar
