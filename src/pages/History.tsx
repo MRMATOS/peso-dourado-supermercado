@@ -30,7 +30,7 @@ interface WeighingWithBuyer {
     id: string;
     name: string;
     company?: string;
-  };
+  } | null;
 }
 
 type FilterPeriod = 'today' | 'yesterday' | 'week' | 'month' | 'custom';
@@ -119,18 +119,20 @@ const HistoryPage = () => {
   const groupedByType: Record<string, { totalWeight: number; totalPrice: number }> = {};
 
   // Calculate buyers ranking
-  const buyersRanking: Record<number, { name: string; totalPrice: number }> = {};
+  const buyersRanking: Record<string, { name: string; totalPrice: number }> = {};
 
   // Process data for summaries
   weighings.forEach((weighing) => {
-    // For buyer ranking
-    if (!buyersRanking[weighing.buyer_id]) {
-      buyersRanking[weighing.buyer_id] = {
-        name: weighing.buyer.name,
-        totalPrice: 0,
-      };
+    // For buyer ranking - Add null check before accessing buyer properties
+    if (weighing.buyer && weighing.buyer_id) {
+      if (!buyersRanking[weighing.buyer_id]) {
+        buyersRanking[weighing.buyer_id] = {
+          name: weighing.buyer.name,
+          totalPrice: 0,
+        };
+      }
+      buyersRanking[weighing.buyer_id].totalPrice += weighing.total_price;
     }
-    buyersRanking[weighing.buyer_id].totalPrice += weighing.total_price;
   });
 
   // Sort buyers by total price
@@ -332,11 +334,17 @@ const HistoryPage = () => {
                         {formatDate(weighing.created_at)}
                       </td>
                       <td className="p-2">
-                        {weighing.buyer.name}
-                        {weighing.buyer.company && (
-                          <span className="text-xs text-muted-foreground ml-1">
-                            ({weighing.buyer.company})
-                          </span>
+                        {weighing.buyer ? (
+                          <>
+                            {weighing.buyer.name}
+                            {weighing.buyer.company && (
+                              <span className="text-xs text-muted-foreground ml-1">
+                                ({weighing.buyer.company})
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-muted-foreground">Comprador não disponível</span>
                         )}
                       </td>
                       <td className="p-2 text-right">
