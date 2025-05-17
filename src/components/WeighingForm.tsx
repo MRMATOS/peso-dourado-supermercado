@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, FormEvent } from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -36,17 +35,6 @@ const WeighingForm = () => {
   // Filter products by selected item type
   const filteredProducts = products.filter(product => product.item_type === itemType);
   
-  // Reset form
-  const resetForm = () => {
-    setItemType('');
-    setProductId(null);
-    setGrossWeightKg(0);
-    setTareKg(0);
-    setNetWeightKg(0);
-    setUnitPrice(0);
-    setTotalPrice(0);
-  };
-
   // Update tare when item type changes
   useEffect(() => {
     if (itemType) {
@@ -107,9 +95,7 @@ const WeighingForm = () => {
       totalPrice,
     });
     
-    // Reset form
-    setItemType('');
-    setProductId(null);
+    // Only reset the gross weight - keeping itemType and productId
     setGrossWeightKg(0);
   };
 
@@ -169,8 +155,8 @@ const WeighingForm = () => {
                 id="grossWeight"
                 value={grossWeightKg}
                 onChange={setGrossWeightKg}
-                decimalPlaces={3}
-                placeholder="0,000"
+                decimalPlaces={2}
+                placeholder="0,00"
                 className="input-weight"
                 suffix="kg"
                 clearOnFocus
@@ -184,8 +170,8 @@ const WeighingForm = () => {
                 id="tare"
                 value={tareKg}
                 onChange={setTareKg}
-                decimalPlaces={3}
-                placeholder="0,000"
+                decimalPlaces={2}
+                placeholder="0,00"
                 suffix="kg"
                 disabled={!itemType}
               />
@@ -198,7 +184,7 @@ const WeighingForm = () => {
                 id="netWeight"
                 value={netWeightKg}
                 onChange={() => {}} // Read-only
-                decimalPlaces={3}
+                decimalPlaces={2}
                 suffix="kg"
                 disabled
                 className="bg-gray-50"
@@ -219,32 +205,30 @@ const WeighingForm = () => {
               />
             </div>
 
-            {/* Preço Total (calculated) */}
+            {/* Preço Total with Add Button on same row */}
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="totalPrice">Preço Total</Label>
-              <div className="flex items-center">
-                <NumberInput
-                  id="totalPrice"
-                  value={totalPrice}
-                  onChange={() => {}} // Read-only
-                  decimalPlaces={2}
-                  prefix="R$"
-                  disabled
-                  className="bg-gray-50 font-bold text-emerald-600"
-                />
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <NumberInput
+                    id="totalPrice"
+                    value={totalPrice}
+                    onChange={() => {}} // Read-only
+                    decimalPlaces={2}
+                    prefix="R$"
+                    disabled
+                    className="bg-gray-50 font-bold text-emerald-600"
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="px-6 whitespace-nowrap"
+                  disabled={!itemType || grossWeightKg <= 0 || (itemType === 'Osso' && !productId)}
+                >
+                  Adicionar
+                </Button>
               </div>
             </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-end pt-2">
-            <Button 
-              type="submit" 
-              className="px-6"
-              disabled={!itemType || grossWeightKg <= 0 || (itemType === 'Osso' && !productId)}
-            >
-              Adicionar
-            </Button>
           </div>
         </form>
       </CardContent>

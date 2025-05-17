@@ -1,4 +1,3 @@
-
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -49,11 +48,11 @@ export function parseNumber(value: string): number {
 }
 
 // Format number with Brazilian decimal separator
-export function formatNumber(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 3
-  }).format(value);
+export function formatNumber(value: number, decimalPlaces: number = 2): string {
+  return value.toLocaleString('pt-BR', {
+    minimumFractionDigits: decimalPlaces,
+    maximumFractionDigits: decimalPlaces,
+  });
 }
 
 // Validate CPF

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { WeighingProvider } from '@/contexts/WeighingContext';
@@ -149,8 +148,8 @@ const HistoryPage = () => {
     <div className="container mx-auto px-4 py-8">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-superdall-blue">Histórico de Pesagens</h1>
-          <p className="text-muted-foreground">SuperDallPozo</p>
+          <h1 className="text-3xl font-bold" style={{ color: "#3A86F7" }}>Histórico de Pesagens</h1>
+          <p className="text-muted-foreground">Super Dal Pozzo</p>
         </div>
         <div className="flex mt-4 md:mt-0 space-x-2">
           <Button asChild variant="outline" size="sm">
@@ -257,15 +256,15 @@ const HistoryPage = () => {
             ) : (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="bg-superdall-light p-4 rounded-lg">
+                  <div className="bg-gray-50 p-4 rounded-lg">
                     <p className="text-muted-foreground text-sm">Total de Pesagens</p>
                     <p className="text-2xl font-bold">{totalWeighings}</p>
                   </div>
-                  <div className="bg-superdall-light p-4 rounded-lg">
+                  <div className="bg-gray-50 p-4 rounded-lg">
                     <p className="text-muted-foreground text-sm">Peso Total</p>
-                    <p className="text-2xl font-bold">{formatNumber(totalWeight)} kg</p>
+                    <p className="text-2xl font-bold">{formatNumber(totalWeight, 2)} kg</p>
                   </div>
-                  <div className="bg-superdall-light p-4 rounded-lg">
+                  <div className="bg-gray-50 p-4 rounded-lg">
                     <p className="text-muted-foreground text-sm">Valor Total</p>
                     <p className="text-2xl font-bold text-green-600">
                       {formatCurrency(totalPrice)}
