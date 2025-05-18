@@ -853,7 +853,7 @@ const ConfigPage = () => {
                           <th className="p-2 text-left">Telefone</th>
                           <th className="p-2 text-left">Documento</th>
                           <th className="p-2 text-left">Empresa</th>
-                          <th className="p-2 text-right">Ações</th>
+                          <th className="p-2 text-center">Ações</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -870,7 +870,7 @@ const ConfigPage = () => {
                             <td className="p-2">
                               <Input value={editedBuyers[buyer.id]?.company !== undefined ? editedBuyers[buyer.id]?.company as string || '' : buyer.company || ''} onChange={e => handleBuyerChange(buyer.id, 'company', e.target.value || null)} />
                             </td>
-                            <td className="p-2 text-right">
+                            <td className="p-2 text-center">
                               <Button variant="ghost" size="icon" onClick={() => handleDeleteBuyer(buyer.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
                                 <Trash2 className="h-5 w-5" />
                               </Button>
