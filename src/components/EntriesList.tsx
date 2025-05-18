@@ -26,14 +26,14 @@ const EntriesList = ({
   const totalNetWeight = currentEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0);
   const totalAmount = currentEntries.reduce((sum, entry) => sum + entry.totalPrice, 0);
   const ActionButtons = () => <div className="flex flex-wrap gap-2 justify-end mb-4">
-      <Button variant="outline" onClick={onPrint} disabled={currentEntries.length === 0} size="sm" className="bg-[#3986f7] text-slate-50">
-        <Printer className="mr-2 h-4 w-4" />
-        Imprimir
-      </Button>
-      
       <Button variant="outline" onClick={onNew} size="sm">
         <Plus className="mr-2 h-4 w-4" />
         Nova Pesagem
+      </Button>
+
+      <Button variant="outline" onClick={onPrint} disabled={currentEntries.length === 0} size="sm" className="bg-[#3986f7] text-slate-50">
+        <Printer className="mr-2 h-4 w-4" />
+        Imprimir
       </Button>
     </div>;
   if (currentEntries.length === 0) {
