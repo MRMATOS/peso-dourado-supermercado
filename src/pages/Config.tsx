@@ -677,9 +677,9 @@ const ConfigPage = () => {
                           <th className="p-2 text-left" style={{
                         width: "25%"
                       }}>Tipo</th>
-                          <th className="p-2 text-right" style={{
+                          <th style={{
                         width: "10%"
-                      }}>Ações</th>
+                      }} className="p-2 text-center">Ações</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -703,9 +703,9 @@ const ConfigPage = () => {
                                   </option>)}
                               </select>
                             </td>
-                            <td className="p-2 text-right" style={{
+                            <td style={{
                         width: "10%"
-                      }}>
+                      }} className="p-2 text-center">
                               <Button variant="ghost" size="icon" onClick={() => handleDeleteProduct(product.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
                                 <Trash2 className="h-5 w-5" />
                               </Button>
