@@ -668,28 +668,28 @@ const ConfigPage = () => {
                     <table className="w-full border-collapse">
                       <thead>
                         <tr className="bg-muted">
-                          <th className="p-2 text-left">Código</th>
-                          <th className="p-2 text-left">Descrição</th>
-                          <th className="p-2 text-left">Tipo</th>
-                          <th className="p-2 text-right">Ações</th>
+                          <th className="p-2 text-left" style={{ width: "15%" }}>Código</th>
+                          <th className="p-2 text-left" style={{ width: "50%" }}>Descrição</th>
+                          <th className="p-2 text-left" style={{ width: "25%" }}>Tipo</th>
+                          <th className="p-2 text-right" style={{ width: "10%" }}>Ações</th>
                         </tr>
                       </thead>
                       <tbody>
                         {products.map(product => <tr key={product.id} className="border-b">
-                            <td className="p-2 w-fit max-w-[200px]">
-                              <Input value={editedProducts[product.id]?.code !== undefined ? editedProducts[product.id]?.code as string : product.code} onChange={e => handleProductChange(product.id, 'code', e.target.value)} className="" />
+                            <td className="p-2" style={{ width: "15%" }}>
+                              <Input value={editedProducts[product.id]?.code !== undefined ? editedProducts[product.id]?.code as string : product.code} onChange={e => handleProductChange(product.id, 'code', e.target.value)} className="w-full" />
                             </td>
-                            <td className="p-2">
+                            <td className="p-2" style={{ width: "50%" }}>
                               <Input value={editedProducts[product.id]?.description !== undefined ? editedProducts[product.id]?.description as string : product.description} onChange={e => handleProductChange(product.id, 'description', e.target.value)} />
                             </td>
-                            <td className="p-2">
+                            <td className="p-2" style={{ width: "25%" }}>
                               <select value={editedProducts[product.id]?.item_type !== undefined ? editedProducts[product.id]?.item_type as string : product.item_type} onChange={e => handleProductChange(product.id, 'item_type', e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2">
                                 {unitPrices.map(up => <option key={up.id} value={up.item_type}>
                                     {up.item_type}
                                   </option>)}
                               </select>
                             </td>
-                            <td className="p-2 text-right">
+                            <td className="p-2 text-right" style={{ width: "10%" }}>
                               <Button variant="ghost" size="icon" onClick={() => handleDeleteProduct(product.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
                                 <Trash2 className="h-5 w-5" />
                               </Button>
