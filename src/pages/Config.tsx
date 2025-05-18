@@ -677,7 +677,7 @@ const ConfigPage = () => {
                       <tbody>
                         {products.map(product => <tr key={product.id} className="border-b">
                             <td className="p-2 w-fit max-w-[200px]">
-                              <Input value={editedProducts[product.id]?.code !== undefined ? editedProducts[product.id]?.code as string : product.code} onChange={e => handleProductChange(product.id, 'code', e.target.value)} className="max-w-[200px]" />
+                              <Input value={editedProducts[product.id]?.code !== undefined ? editedProducts[product.id]?.code as string : product.code} onChange={e => handleProductChange(product.id, 'code', e.target.value)} className="" />
                             </td>
                             <td className="p-2">
                               <Input value={editedProducts[product.id]?.description !== undefined ? editedProducts[product.id]?.description as string : product.description} onChange={e => handleProductChange(product.id, 'description', e.target.value)} />
