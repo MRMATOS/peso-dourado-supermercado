@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { WeighingProvider } from '@/contexts/WeighingContext';
@@ -50,22 +51,26 @@ const ConfigPage = () => {
   
   // Item Types data
   const [unitPrices, setUnitPrices] = useState<UnitPrice[]>([]);
+  const [editedUnitPrices, setEditedUnitPrices] = useState<Record<string, number>>({});
   const [newItemType, setNewItemType] = useState('');
   const [newUnitPrice, setNewUnitPrice] = useState(0);
   
   // Products data
   const [products, setProducts] = useState<Product[]>([]);
+  const [editedProducts, setEditedProducts] = useState<Record<string, Partial<Product>>>({});
   const [newProductCode, setNewProductCode] = useState('');
   const [newProductDescription, setNewProductDescription] = useState('');
   const [newProductType, setNewProductType] = useState('');
   
   // Tare weights data
   const [tareWeights, setTareWeights] = useState<TareWeight[]>([]);
+  const [editedTareWeights, setEditedTareWeights] = useState<Record<string, number>>({});
   const [newTareType, setNewTareType] = useState('');
   const [newTareWeight, setNewTareWeight] = useState(0);
   
   // Buyers data
   const [buyers, setBuyers] = useState<Buyer[]>([]);
+  const [editedBuyers, setEditedBuyers] = useState<Record<string, Partial<Buyer>>>({});
   const [newBuyerName, setNewBuyerName] = useState('');
   const [newBuyerPhone, setNewBuyerPhone] = useState('');
   const [newBuyerDocument, setNewBuyerDocument] = useState('');
@@ -86,11 +91,13 @@ const ConfigPage = () => {
           case 'types':
             const unitPricesData = await getUnitPrices();
             setUnitPrices(unitPricesData as UnitPrice[]);
+            setEditedUnitPrices({});
             break;
             
           case 'products':
             const productsData = await getProducts();
             setProducts(productsData as Product[]);
+            setEditedProducts({});
             
             const unitPricesForDropdown = await getUnitPrices();
             setUnitPrices(unitPricesForDropdown as UnitPrice[]);
@@ -99,6 +106,7 @@ const ConfigPage = () => {
           case 'tare':
             const tareWeightsData = await getTareWeights();
             setTareWeights(tareWeightsData as TareWeight[]);
+            setEditedTareWeights({});
             
             const unitPricesForTare = await getUnitPrices();
             setUnitPrices(unitPricesForTare as UnitPrice[]);
@@ -107,6 +115,7 @@ const ConfigPage = () => {
           case 'buyers':
             const buyersData = await getBuyers();
             setBuyers(buyersData as Buyer[]);
+            setEditedBuyers({});
             break;
             
           case 'report':
@@ -168,20 +177,42 @@ const ConfigPage = () => {
     }
   };
   
-  const handleUpdateItemType = async (id: string, price: number) => {
+  const handleUnitPriceChange = (id: string, price: number) => {
+    setEditedUnitPrices({
+      ...editedUnitPrices,
+      [id]: price
+    });
+  };
+  
+  const handleSaveUnitPrices = async () => {
     setIsLoading(true);
     
     try {
-      const updatedUnitPrice = await updateUnitPrice(id, { price });
+      const updates = Object.entries(editedUnitPrices);
       
-      setUnitPrices(unitPrices.map(up => 
-        up.id === id ? updatedUnitPrice as UnitPrice : up
-      ));
+      if (updates.length === 0) {
+        toast.info('Nenhuma alteração para salvar');
+        setIsLoading(false);
+        return;
+      }
       
-      toast.success('Preço atualizado com sucesso');
+      for (const [id, price] of updates) {
+        await updateUnitPrice(id, { price });
+      }
+      
+      setUnitPrices(unitPrices.map(up => {
+        if (editedUnitPrices[up.id] !== undefined) {
+          return { ...up, price: editedUnitPrices[up.id] };
+        }
+        return up;
+      }));
+      
+      setEditedUnitPrices({});
+      
+      toast.success('Preços atualizados com sucesso');
     } catch (error) {
-      console.error('Error updating unit price:', error);
-      toast.error('Erro ao atualizar preço');
+      console.error('Error updating unit prices:', error);
+      toast.error('Erro ao atualizar preços');
     } finally {
       setIsLoading(false);
     }
@@ -198,6 +229,10 @@ const ConfigPage = () => {
       await deleteUnitPrice(id);
       
       setUnitPrices(unitPrices.filter(up => up.id !== id));
+      
+      // Remove from edited state if present
+      const { [id]: _, ...rest } = editedUnitPrices;
+      setEditedUnitPrices(rest);
       
       toast.success('Tipo de pesagem excluído com sucesso');
     } catch (error) {
@@ -259,20 +294,45 @@ const ConfigPage = () => {
     }
   };
   
-  const handleUpdateProduct = async (id: string, updatedData: Partial<Product>) => {
+  const handleProductChange = (id: string, field: keyof Product, value: string) => {
+    setEditedProducts({
+      ...editedProducts,
+      [id]: {
+        ...(editedProducts[id] || {}),
+        [field]: value
+      }
+    });
+  };
+  
+  const handleSaveProducts = async () => {
     setIsLoading(true);
     
     try {
-      const updatedProduct = await updateProduct(id, updatedData);
+      const updates = Object.entries(editedProducts);
       
-      setProducts(products.map(p => 
-        p.id === id ? updatedProduct : p
-      ));
+      if (updates.length === 0) {
+        toast.info('Nenhuma alteração para salvar');
+        setIsLoading(false);
+        return;
+      }
       
-      toast.success('Produto atualizado com sucesso');
+      for (const [id, data] of updates) {
+        await updateProduct(id, data);
+      }
+      
+      setProducts(products.map(p => {
+        if (editedProducts[p.id]) {
+          return { ...p, ...editedProducts[p.id] };
+        }
+        return p;
+      }));
+      
+      setEditedProducts({});
+      
+      toast.success('Produtos atualizados com sucesso');
     } catch (error) {
-      console.error('Error updating product:', error);
-      toast.error('Erro ao atualizar produto');
+      console.error('Error updating products:', error);
+      toast.error('Erro ao atualizar produtos');
     } finally {
       setIsLoading(false);
     }
@@ -289,6 +349,10 @@ const ConfigPage = () => {
       await deleteProduct(id);
       
       setProducts(products.filter(p => p.id !== id));
+      
+      // Remove from edited state if present
+      const { [id]: _, ...rest } = editedProducts;
+      setEditedProducts(rest);
       
       toast.success('Produto excluído com sucesso');
     } catch (error) {
@@ -340,20 +404,42 @@ const ConfigPage = () => {
     }
   };
   
-  const handleUpdateTareWeight = async (id: string, tare_kg: number) => {
+  const handleTareWeightChange = (id: string, tare_kg: number) => {
+    setEditedTareWeights({
+      ...editedTareWeights,
+      [id]: tare_kg
+    });
+  };
+  
+  const handleSaveTareWeights = async () => {
     setIsLoading(true);
     
     try {
-      const updatedTare = await updateTareWeight(id, { tare_kg });
+      const updates = Object.entries(editedTareWeights);
       
-      setTareWeights(tareWeights.map(tw => 
-        tw.id === id ? updatedTare : tw
-      ));
+      if (updates.length === 0) {
+        toast.info('Nenhuma alteração para salvar');
+        setIsLoading(false);
+        return;
+      }
       
-      toast.success('Tara atualizada com sucesso');
+      for (const [id, tare_kg] of updates) {
+        await updateTareWeight(id, { tare_kg });
+      }
+      
+      setTareWeights(tareWeights.map(tw => {
+        if (editedTareWeights[tw.id] !== undefined) {
+          return { ...tw, tare_kg: editedTareWeights[tw.id] };
+        }
+        return tw;
+      }));
+      
+      setEditedTareWeights({});
+      
+      toast.success('Taras atualizadas com sucesso');
     } catch (error) {
-      console.error('Error updating tare weight:', error);
-      toast.error('Erro ao atualizar tara');
+      console.error('Error updating tare weights:', error);
+      toast.error('Erro ao atualizar taras');
     } finally {
       setIsLoading(false);
     }
@@ -370,6 +456,10 @@ const ConfigPage = () => {
       await deleteTareWeight(id);
       
       setTareWeights(tareWeights.filter(tw => tw.id !== id));
+      
+      // Remove from edited state if present
+      const { [id]: _, ...rest } = editedTareWeights;
+      setEditedTareWeights(rest);
       
       toast.success('Tara excluída com sucesso');
     } catch (error) {
@@ -455,20 +545,45 @@ const ConfigPage = () => {
     }
   };
   
-  const handleUpdateBuyer = async (id: string, updatedData: Partial<Buyer>) => {
+  const handleBuyerChange = (id: string, field: keyof Buyer, value: string) => {
+    setEditedBuyers({
+      ...editedBuyers,
+      [id]: {
+        ...(editedBuyers[id] || {}),
+        [field]: value
+      }
+    });
+  };
+  
+  const handleSaveBuyers = async () => {
     setIsLoading(true);
     
     try {
-      const updatedBuyer = await updateBuyer(id, updatedData);
+      const updates = Object.entries(editedBuyers);
       
-      setBuyers(buyers.map(b => 
-        b.id === id ? updatedBuyer : b
-      ));
+      if (updates.length === 0) {
+        toast.info('Nenhuma alteração para salvar');
+        setIsLoading(false);
+        return;
+      }
       
-      toast.success('Comprador atualizado com sucesso');
+      for (const [id, data] of updates) {
+        await updateBuyer(id, data);
+      }
+      
+      setBuyers(buyers.map(b => {
+        if (editedBuyers[b.id]) {
+          return { ...b, ...editedBuyers[b.id] };
+        }
+        return b;
+      }));
+      
+      setEditedBuyers({});
+      
+      toast.success('Compradores atualizados com sucesso');
     } catch (error) {
-      console.error('Error updating buyer:', error);
-      toast.error('Erro ao atualizar comprador');
+      console.error('Error updating buyers:', error);
+      toast.error('Erro ao atualizar compradores');
     } finally {
       setIsLoading(false);
     }
@@ -485,6 +600,10 @@ const ConfigPage = () => {
       await deleteBuyer(id);
       
       setBuyers(buyers.filter(b => b.id !== id));
+      
+      // Remove from edited state if present
+      const { [id]: _, ...rest } = editedBuyers;
+      setEditedBuyers(rest);
       
       toast.success('Comprador excluído com sucesso');
     } catch (error) {
@@ -600,46 +719,61 @@ const ConfigPage = () => {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="p-2 text-left">Tipo</th>
-                        <th className="p-2 text-left">Preço por kg</th>
-                        <th className="p-2 text-right">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {unitPrices.map((unitPrice) => (
-                        <tr key={unitPrice.id} className="border-b">
-                          <td className="p-2">
-                            {unitPrice.item_type}
-                          </td>
-                          <td className="p-2">
-                            <NumberInput
-                              value={unitPrice.price}
-                              onChange={(newPrice) => 
-                                handleUpdateItemType(unitPrice.id, newPrice)
-                              }
-                              decimalPlaces={2}
-                              prefix="R$"
-                            />
-                          </td>
-                          <td className="p-2 text-right">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDeleteItemType(unitPrice.id)}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-5 w-5" />
-                            </Button>
-                          </td>
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-muted">
+                          <th className="p-2 text-left">Tipo</th>
+                          <th className="p-2 text-left">Preço por kg</th>
+                          <th className="p-2 text-right">Ações</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {unitPrices.map((unitPrice) => (
+                          <tr key={unitPrice.id} className="border-b">
+                            <td className="p-2">
+                              {unitPrice.item_type}
+                            </td>
+                            <td className="p-2">
+                              <NumberInput
+                                value={editedUnitPrices[unitPrice.id] !== undefined 
+                                  ? editedUnitPrices[unitPrice.id] 
+                                  : unitPrice.price}
+                                onChange={(newPrice) => 
+                                  handleUnitPriceChange(unitPrice.id, newPrice)
+                                }
+                                decimalPlaces={2}
+                                prefix="R$"
+                              />
+                            </td>
+                            <td className="p-2 text-right">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDeleteItemType(unitPrice.id)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <Button 
+                      onClick={handleSaveUnitPrices}
+                      disabled={isLoading || Object.keys(editedUnitPrices).length === 0}
+                      size="sm"
+                      className="flex items-center"
+                    >
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar
+                    </Button>
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
@@ -713,65 +847,84 @@ const ConfigPage = () => {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="p-2 text-left">Código</th>
-                        <th className="p-2 text-left">Descrição</th>
-                        <th className="p-2 text-left">Tipo</th>
-                        <th className="p-2 text-right">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products.map((product) => (
-                        <tr key={product.id} className="border-b">
-                          <td className="p-2">
-                            <Input
-                              value={product.code}
-                              onChange={(e) => 
-                                handleUpdateProduct(product.id, { code: e.target.value })
-                              }
-                            />
-                          </td>
-                          <td className="p-2">
-                            <Input
-                              value={product.description}
-                              onChange={(e) => 
-                                handleUpdateProduct(product.id, { description: e.target.value })
-                              }
-                            />
-                          </td>
-                          <td className="p-2">
-                            <select
-                              value={product.item_type}
-                              onChange={(e) => 
-                                handleUpdateProduct(product.id, { item_type: e.target.value })
-                              }
-                              className="w-full rounded-md border border-input bg-background px-3 py-2"
-                            >
-                              {unitPrices.map((up) => (
-                                <option key={up.id} value={up.item_type}>
-                                  {up.item_type}
-                                </option>
-                              ))}
-                            </select>
-                          </td>
-                          <td className="p-2 text-right">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDeleteProduct(product.id)}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-5 w-5" />
-                            </Button>
-                          </td>
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-muted">
+                          <th className="p-2 text-left">Código</th>
+                          <th className="p-2 text-left">Descrição</th>
+                          <th className="p-2 text-left">Tipo</th>
+                          <th className="p-2 text-right">Ações</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {products.map((product) => (
+                          <tr key={product.id} className="border-b">
+                            <td className="p-2">
+                              <Input
+                                value={editedProducts[product.id]?.code !== undefined 
+                                  ? editedProducts[product.id]?.code as string 
+                                  : product.code}
+                                onChange={(e) => 
+                                  handleProductChange(product.id, 'code', e.target.value)
+                                }
+                              />
+                            </td>
+                            <td className="p-2">
+                              <Input
+                                value={editedProducts[product.id]?.description !== undefined 
+                                  ? editedProducts[product.id]?.description as string 
+                                  : product.description}
+                                onChange={(e) => 
+                                  handleProductChange(product.id, 'description', e.target.value)
+                                }
+                              />
+                            </td>
+                            <td className="p-2">
+                              <select
+                                value={editedProducts[product.id]?.item_type !== undefined 
+                                  ? editedProducts[product.id]?.item_type as string 
+                                  : product.item_type}
+                                onChange={(e) => 
+                                  handleProductChange(product.id, 'item_type', e.target.value)
+                                }
+                                className="w-full rounded-md border border-input bg-background px-3 py-2"
+                              >
+                                {unitPrices.map((up) => (
+                                  <option key={up.id} value={up.item_type}>
+                                    {up.item_type}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="p-2 text-right">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDeleteProduct(product.id)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <Button 
+                      onClick={handleSaveProducts}
+                      disabled={isLoading || Object.keys(editedProducts).length === 0}
+                      size="sm"
+                      className="flex items-center"
+                    >
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar
+                    </Button>
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
@@ -809,7 +962,7 @@ const ConfigPage = () => {
                     id="newTareWeight"
                     value={newTareWeight}
                     onChange={setNewTareWeight}
-                    decimalPlaces={3}
+                    decimalPlaces={2}
                     suffix="kg"
                   />
                 </div>
@@ -834,46 +987,61 @@ const ConfigPage = () => {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="p-2 text-left">Tipo</th>
-                        <th className="p-2 text-left">Tara (kg)</th>
-                        <th className="p-2 text-right">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tareWeights.map((tareWeight) => (
-                        <tr key={tareWeight.id} className="border-b">
-                          <td className="p-2">
-                            {tareWeight.item_type}
-                          </td>
-                          <td className="p-2">
-                            <NumberInput
-                              value={tareWeight.tare_kg}
-                              onChange={(newTare) => 
-                                handleUpdateTareWeight(tareWeight.id, newTare)
-                              }
-                              decimalPlaces={3}
-                              suffix="kg"
-                            />
-                          </td>
-                          <td className="p-2 text-right">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDeleteTareWeight(tareWeight.id)}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-5 w-5" />
-                            </Button>
-                          </td>
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-muted">
+                          <th className="p-2 text-left">Tipo</th>
+                          <th className="p-2 text-left">Tara (kg)</th>
+                          <th className="p-2 text-right">Ações</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {tareWeights.map((tareWeight) => (
+                          <tr key={tareWeight.id} className="border-b">
+                            <td className="p-2">
+                              {tareWeight.item_type}
+                            </td>
+                            <td className="p-2">
+                              <NumberInput
+                                value={editedTareWeights[tareWeight.id] !== undefined 
+                                  ? editedTareWeights[tareWeight.id] 
+                                  : tareWeight.tare_kg}
+                                onChange={(newTare) => 
+                                  handleTareWeightChange(tareWeight.id, newTare)
+                                }
+                                decimalPlaces={2}
+                                suffix="kg"
+                              />
+                            </td>
+                            <td className="p-2 text-right">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDeleteTareWeight(tareWeight.id)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <Button 
+                      onClick={handleSaveTareWeights}
+                      disabled={isLoading || Object.keys(editedTareWeights).length === 0}
+                      size="sm"
+                      className="flex items-center"
+                    >
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar
+                    </Button>
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
@@ -958,67 +1126,88 @@ const ConfigPage = () => {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="p-2 text-left">Nome</th>
-                        <th className="p-2 text-left">Telefone</th>
-                        <th className="p-2 text-left">Documento</th>
-                        <th className="p-2 text-left">Empresa</th>
-                        <th className="p-2 text-right">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {buyers.map((buyer) => (
-                        <tr key={buyer.id} className="border-b">
-                          <td className="p-2">
-                            <Input
-                              value={buyer.name}
-                              onChange={(e) => 
-                                handleUpdateBuyer(buyer.id, { name: e.target.value })
-                              }
-                            />
-                          </td>
-                          <td className="p-2">
-                            <Input
-                              value={formatPhone(buyer.phone)}
-                              onChange={(e) => 
-                                handleUpdateBuyer(buyer.id, { phone: e.target.value.replace(/\D/g, '') })
-                              }
-                            />
-                          </td>
-                          <td className="p-2">
-                            <Input
-                              value={formatDocument(buyer.document || '')}
-                              onChange={(e) => 
-                                handleUpdateBuyer(buyer.id, { document: e.target.value.replace(/\D/g, '') || null })
-                              }
-                            />
-                          </td>
-                          <td className="p-2">
-                            <Input
-                              value={buyer.company || ''}
-                              onChange={(e) => 
-                                handleUpdateBuyer(buyer.id, { company: e.target.value || null })
-                              }
-                            />
-                          </td>
-                          <td className="p-2 text-right">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDeleteBuyer(buyer.id)}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-5 w-5" />
-                            </Button>
-                          </td>
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-muted">
+                          <th className="p-2 text-left">Nome</th>
+                          <th className="p-2 text-left">Telefone</th>
+                          <th className="p-2 text-left">Documento</th>
+                          <th className="p-2 text-left">Empresa</th>
+                          <th className="p-2 text-right">Ações</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {buyers.map((buyer) => (
+                          <tr key={buyer.id} className="border-b">
+                            <td className="p-2">
+                              <Input
+                                value={editedBuyers[buyer.id]?.name !== undefined 
+                                  ? editedBuyers[buyer.id]?.name as string 
+                                  : buyer.name}
+                                onChange={(e) => 
+                                  handleBuyerChange(buyer.id, 'name', e.target.value)
+                                }
+                              />
+                            </td>
+                            <td className="p-2">
+                              <Input
+                                value={formatPhone(editedBuyers[buyer.id]?.phone !== undefined 
+                                  ? editedBuyers[buyer.id]?.phone as string 
+                                  : buyer.phone)}
+                                onChange={(e) => 
+                                  handleBuyerChange(buyer.id, 'phone', e.target.value.replace(/\D/g, ''))
+                                }
+                              />
+                            </td>
+                            <td className="p-2">
+                              <Input
+                                value={formatDocument(editedBuyers[buyer.id]?.document !== undefined 
+                                  ? editedBuyers[buyer.id]?.document as string || '' 
+                                  : buyer.document || '')}
+                                onChange={(e) => 
+                                  handleBuyerChange(buyer.id, 'document', e.target.value.replace(/\D/g, '') || null)
+                                }
+                              />
+                            </td>
+                            <td className="p-2">
+                              <Input
+                                value={editedBuyers[buyer.id]?.company !== undefined 
+                                  ? editedBuyers[buyer.id]?.company as string || '' 
+                                  : buyer.company || ''}
+                                onChange={(e) => 
+                                  handleBuyerChange(buyer.id, 'company', e.target.value || null)
+                                }
+                              />
+                            </td>
+                            <td className="p-2 text-right">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDeleteBuyer(buyer.id)}
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <Button 
+                      onClick={handleSaveBuyers}
+                      disabled={isLoading || Object.keys(editedBuyers).length === 0}
+                      size="sm"
+                      className="flex items-center"
+                    >
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar
+                    </Button>
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
