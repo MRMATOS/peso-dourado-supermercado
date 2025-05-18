@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
 import { Button } from '@/components/ui/button';
@@ -6,14 +5,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { ArrowDownAZ, ArrowUpAZ, Trash2, ClipboardList, Printer, Save, Plus } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
 interface EntriesListProps {
   onPrint?: () => void;
   onSave?: () => void;
   onNew?: () => void;
 }
-
-const EntriesList = ({ onPrint, onSave, onNew }: EntriesListProps) => {
+const EntriesList = ({
+  onPrint,
+  onSave,
+  onNew
+}: EntriesListProps) => {
   const {
     currentEntries,
     removeEntry,
@@ -24,38 +25,17 @@ const EntriesList = ({ onPrint, onSave, onNew }: EntriesListProps) => {
   // Calculate totals
   const totalNetWeight = currentEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0);
   const totalAmount = currentEntries.reduce((sum, entry) => sum + entry.totalPrice, 0);
-  
-  const ActionButtons = () => (
-    <div className="flex flex-wrap gap-2 justify-end mb-4">
-      <Button 
-        variant="outline" 
-        onClick={onPrint}
-        disabled={currentEntries.length === 0}
-        size="sm"
-      >
+  const ActionButtons = () => <div className="flex flex-wrap gap-2 justify-end mb-4">
+      <Button variant="outline" onClick={onPrint} disabled={currentEntries.length === 0} size="sm" className="bg-[#3986f7] text-slate-50">
         <Printer className="mr-2 h-4 w-4" />
         Imprimir
       </Button>
-      <Button 
-        variant="outline" 
-        onClick={onSave}
-        disabled={currentEntries.length === 0}
-        size="sm"
-      >
-        <Save className="mr-2 h-4 w-4" />
-        Salvar Pesagem
-      </Button>
-      <Button 
-        variant="outline" 
-        onClick={onNew}
-        size="sm"
-      >
+      
+      <Button variant="outline" onClick={onNew} size="sm">
         <Plus className="mr-2 h-4 w-4" />
         Nova Pesagem
       </Button>
-    </div>
-  );
-  
+    </div>;
   if (currentEntries.length === 0) {
     return <Card className="rounded-xl shadow-sm">
         <CardContent className="p-6 flex items-center justify-center">
