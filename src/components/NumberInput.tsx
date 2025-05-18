@@ -80,7 +80,8 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       setIsFocused(true);
       if (props.onFocus) props.onFocus(e);
       
-      if (clearOnFocus) {
+      // Only clear if the value is 0 or 0,00 and clearOnFocus is true
+      if (clearOnFocus && value === 0) {
         setDisplayValue('');
       }
     };

@@ -32,24 +32,23 @@ const SaveWeighingModal = ({ open, onOpenChange }: SaveWeighingModalProps) => {
     buyers, 
     currentEntries, 
     saveWeighing, 
-    isSaving 
+    isSaving,
+    addBuyer
   } = useWeighing();
 
   const [selectedBuyerId, setSelectedBuyerId] = useState<string>('');
   const [showNewBuyerForm, setShowNewBuyerForm] = useState(false);
-  const [newlyCreatedBuyer, setNewlyCreatedBuyer] = useState<Buyer | null>(null);
 
   // Calculate summary data
   const totalWeight = currentEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0);
   const totalPrice = currentEntries.reduce((sum, entry) => sum + entry.totalPrice, 0);
 
-  // Set the newly created buyer as selected when returning from the form
+  // Reset the selected buyer when the modal opens
   useEffect(() => {
-    if (newlyCreatedBuyer && newlyCreatedBuyer.id) {
-      setSelectedBuyerId(newlyCreatedBuyer.id.toString());
-      setNewlyCreatedBuyer(null);
+    if (open && buyers.length > 0 && !selectedBuyerId) {
+      setSelectedBuyerId(buyers[0].id.toString());
     }
-  }, [newlyCreatedBuyer]);
+  }, [open, buyers, selectedBuyerId]);
 
   const handleSave = async () => {
     if (!selectedBuyerId) {
@@ -63,8 +62,16 @@ const SaveWeighingModal = ({ open, onOpenChange }: SaveWeighingModalProps) => {
     }
   };
 
-  const handleBuyerCreated = (newBuyer: Buyer) => {
-    setNewlyCreatedBuyer(newBuyer);
+  const handleBuyerCreated = async (newBuyer: Omit<Buyer, 'id' | 'created_at'>) => {
+    // Use the new addBuyer method that returns the created buyer
+    const createdBuyer = await addBuyer(newBuyer);
+    
+    // If buyer was created successfully, select it in the dropdown
+    if (createdBuyer && createdBuyer.id) {
+      setSelectedBuyerId(createdBuyer.id.toString());
+    }
+    
+    // Close the new buyer form
     setShowNewBuyerForm(false);
   };
 

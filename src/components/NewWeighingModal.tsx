@@ -23,6 +23,14 @@ const NewWeighingModal = ({
   onDiscard, 
   onSave 
 }: NewWeighingModalProps) => {
+  const handleSave = () => {
+    onSave();
+  };
+  
+  const handleDiscard = () => {
+    onDiscard();
+  };
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[400px] rounded-lg shadow-lg p-0">
@@ -36,14 +44,14 @@ const NewWeighingModal = ({
         <DialogFooter className="p-5 pt-2 flex gap-2 border-t border-gray-100">
           <Button
             variant="outline"
-            onClick={onDiscard}
+            onClick={handleDiscard}
             className="bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
             size="sm"
           >
             Descartar
           </Button>
           <Button
-            onClick={onSave}
+            onClick={handleSave}
             size="sm"
           >
             Salvar
