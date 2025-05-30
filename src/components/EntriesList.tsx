@@ -5,11 +5,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { ArrowDownAZ, ArrowUpAZ, Trash2, ClipboardList, Printer, Save, Plus } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
 interface EntriesListProps {
   onPrint?: () => void;
   onSave?: () => void;
   onNew?: () => void;
 }
+
 const EntriesList = ({
   onPrint,
   onSave,
@@ -25,7 +27,9 @@ const EntriesList = ({
   // Calculate totals
   const totalNetWeight = currentEntries.reduce((sum, entry) => sum + entry.netWeightKg, 0);
   const totalAmount = currentEntries.reduce((sum, entry) => sum + entry.totalPrice, 0);
-  const ActionButtons = () => <div className="flex flex-wrap gap-2 justify-end mb-4">
+
+  const ActionButtons = () => (
+    <div className="flex flex-wrap gap-2 justify-end mb-4">
       <Button variant="outline" onClick={onNew} size="sm">
         <Plus className="mr-2 h-4 w-4" />
         Nova Pesagem
@@ -35,9 +39,12 @@ const EntriesList = ({
         <Printer className="mr-2 h-4 w-4" />
         Imprimir
       </Button>
-    </div>;
+    </div>
+  );
+
   if (currentEntries.length === 0) {
-    return <Card className="rounded-xl shadow-sm">
+    return (
+      <Card className="rounded-xl shadow-sm">
         <CardContent className="p-6 flex items-center justify-center">
           <div className="text-center py-8">
             <ClipboardList className="mx-auto h-10 w-10 text-gray-400 mb-2" />
@@ -47,20 +54,27 @@ const EntriesList = ({
             </p>
           </div>
         </CardContent>
-      </Card>;
+      </Card>
+    );
   }
-  return <div>
+
+  return (
+    <div>
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div className="bg-white rounded-lg p-4 shadow-sm border">
-          <p className="text-sm text-gray-600 mb-1">Peso Total</p>
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm text-gray-600">Peso Total</p>
+            <p className="text-sm text-gray-500">Itens: {currentEntries.length}</p>
+          </div>
           <p className="text-2xl font-bold">{formatNumber(totalNetWeight, 2)} kg</p>
-          <p className="text-sm text-gray-500 mt-1">Itens: {currentEntries.length}</p>
         </div>
         <div className="bg-white rounded-lg p-4 shadow-sm border">
-          <p className="text-sm text-gray-600 mb-1">Valor Total</p>
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm text-gray-600">Valor Total</p>
+            <p className="text-sm text-gray-500">Média: {formatCurrency(totalAmount / currentEntries.length)}/item</p>
+          </div>
           <p className="text-2xl font-bold text-emerald-600">{formatCurrency(totalAmount)}</p>
-          <p className="text-sm text-gray-500 mt-1">Média: {formatCurrency(totalAmount / currentEntries.length)}/item</p>
         </div>
       </div>
 
@@ -68,17 +82,19 @@ const EntriesList = ({
       {currentEntries.length > 0 && <ActionButtons />}
 
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-medium" style={{
-        color: "#3A86F7"
-      }}>Itens Registrados</h3>
+        <h3 className="text-lg font-medium" style={{ color: "#3A86F7" }}>Itens Registrados</h3>
         <Button variant="outline" size="sm" onClick={toggleSortOrder} className="text-gray-700">
-          {sortOrder === 'newest' ? <>
+          {sortOrder === 'newest' ? (
+            <>
               <ArrowDownAZ className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Mais recentes primeiro</span>
-            </> : <>
+            </>
+          ) : (
+            <>
               <ArrowUpAZ className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Mais antigos primeiro</span>
-            </>}
+            </>
+          )}
         </Button>
       </div>
 
@@ -98,7 +114,8 @@ const EntriesList = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentEntries.map(entry => <TableRow key={entry.id}>
+              {currentEntries.map(entry => (
+                <TableRow key={entry.id}>
                   <TableCell className="font-medium">{entry.itemType}</TableCell>
                   <TableCell>{entry.productDescription || "-"}</TableCell>
                   <TableCell className="text-right">{formatNumber(entry.grossWeightKg, 2)} kg</TableCell>
@@ -107,11 +124,17 @@ const EntriesList = ({
                   <TableCell className="text-right">{formatCurrency(entry.unitPrice)}</TableCell>
                   <TableCell className="text-right font-semibold">{formatCurrency(entry.totalPrice)}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" onClick={() => removeEntry(entry.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeEntry(entry.id)}
+                      className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </TableCell>
-                </TableRow>)}
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -119,6 +142,8 @@ const EntriesList = ({
 
       {/* Action buttons below the list */}
       {currentEntries.length > 0 && <ActionButtons />}
-    </div>;
+    </div>
+  );
 };
+
 export default EntriesList;
