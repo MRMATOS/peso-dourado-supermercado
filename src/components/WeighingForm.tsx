@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, FormEvent, useRef } from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -118,8 +117,8 @@ const WeighingForm = () => {
     <Card className="rounded-xl shadow-sm">
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Tipo de Pesagem */}
+          {/* First row: Type, Product, Gross Weight */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <Label htmlFor="itemType">Tipo de Pesagem</Label>
               <Select
@@ -139,7 +138,6 @@ const WeighingForm = () => {
               </Select>
             </div>
 
-            {/* Produto (only for Osso) */}
             <div className="space-y-2">
               <Label htmlFor="productId">
                 Produto
@@ -163,7 +161,6 @@ const WeighingForm = () => {
               </Select>
             </div>
 
-            {/* Peso Bruto */}
             <div className="space-y-2">
               <Label htmlFor="grossWeight">Peso Bruto (kg)</Label>
               <NumberInput
@@ -179,8 +176,10 @@ const WeighingForm = () => {
                 onKeyDown={handleKeyDown}
               />
             </div>
+          </div>
 
-            {/* Tara */}
+          {/* Second row: Tare, Unit Price, Net Weight */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <Label htmlFor="tare">Tara (kg)</Label>
               <NumberInput
@@ -194,21 +193,6 @@ const WeighingForm = () => {
               />
             </div>
 
-            {/* Peso Líquido (calculated) */}
-            <div className="space-y-2">
-              <Label htmlFor="netWeight">Peso Líquido (kg)</Label>
-              <NumberInput
-                id="netWeight"
-                value={netWeightKg}
-                onChange={() => {}} // Read-only
-                decimalPlaces={2}
-                suffix="kg"
-                disabled
-                className="bg-gray-50"
-              />
-            </div>
-
-            {/* Preço Unitário */}
             <div className="space-y-2">
               <Label htmlFor="unitPrice">Preço por kg</Label>
               <NumberInput
@@ -222,32 +206,43 @@ const WeighingForm = () => {
               />
             </div>
 
-            {/* Preço Total with Add Button on same row */}
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2">
+              <Label htmlFor="netWeight">Peso Líquido (kg)</Label>
+              <NumberInput
+                id="netWeight"
+                value={netWeightKg}
+                onChange={() => {}} // Read-only
+                decimalPlaces={2}
+                suffix="kg"
+                disabled
+                className="bg-gray-50"
+              />
+            </div>
+          </div>
+
+          {/* Total Price and Add Button */}
+          <div className="flex items-center gap-4 pt-2">
+            <div className="w-1/4 md:w-1/6">
               <Label htmlFor="totalPrice">Preço Total</Label>
-              <div className="flex items-center gap-4">
-                <div className="w-1/4 md:w-1/6">
-                  <NumberInput
-                    id="totalPrice"
-                    value={totalPrice}
-                    onChange={() => {}} // Read-only
-                    decimalPlaces={2}
-                    prefix="R$"
-                    disabled
-                    className="bg-gray-50 font-bold text-emerald-600"
-                  />
-                </div>
-                <div className="flex-1 flex justify-end">
-                  <Button 
-                    type="submit" 
-                    className="px-6 whitespace-nowrap"
-                    size="sm"
-                    disabled={!itemType || grossWeightKg <= 0 || (itemType === 'Osso' && !productId)}
-                  >
-                    Adicionar
-                  </Button>
-                </div>
-              </div>
+              <NumberInput
+                id="totalPrice"
+                value={totalPrice}
+                onChange={() => {}} // Read-only
+                decimalPlaces={2}
+                prefix="R$"
+                disabled
+                className="bg-gray-50 font-bold text-emerald-600"
+              />
+            </div>
+            <div className="flex-1 flex justify-end">
+              <Button 
+                type="submit" 
+                className="px-6 whitespace-nowrap"
+                size="sm"
+                disabled={!itemType || grossWeightKg <= 0 || (itemType === 'Osso' && !productId)}
+              >
+                Adicionar
+              </Button>
             </div>
           </div>
         </form>
