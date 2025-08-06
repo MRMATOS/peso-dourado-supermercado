@@ -28,17 +28,29 @@ interface PrintReportModalProps {
 }
 
 const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
-  const { buyers, currentEntries } = useWeighing();
+  const { buyers, currentEntries, saveWeighing } = useWeighing();
   const [selectedBuyerId, setSelectedBuyerId] = useState<string>('');
   const [printOnlyCurrentData, setPrintOnlyCurrentData] = useState(true);
   
   const reportRef = useRef<HTMLDivElement>(null);
   
-  const handlePrint = useReactToPrint({
+  const handlePrintAction = useReactToPrint({
     documentTitle: 'Relatório de Pesagem',
     onAfterPrint: () => onOpenChange(false),
     contentRef: reportRef,
   });
+
+  const handlePrint = async () => {
+    if (selectedBuyerId && currentEntries.length > 0) {
+      try {
+        await saveWeighing(selectedBuyerId);
+      } catch (error) {
+        console.error('Erro ao salvar pesagem:', error);
+        // Continua com a impressão mesmo se houver erro no salvamento
+      }
+    }
+    handlePrintAction();
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
