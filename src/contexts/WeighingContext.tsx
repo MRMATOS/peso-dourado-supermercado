@@ -35,7 +35,7 @@ interface WeighingContextType {
   settings: Settings | null;
   
   // Saving
-  saveWeighing: (buyerId: string) => Promise<boolean>;
+  saveWeighing: (buyerId: string | null) => Promise<boolean>;
   
   // Loading state
   isLoading: boolean;
@@ -236,7 +236,7 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
   });
   
   // Save weighing
-  const saveWeighing = async (buyerId: string): Promise<boolean> => {
+  const saveWeighing = async (buyerId: string | null): Promise<boolean> => {
     if (currentEntries.length === 0) {
       toast.error('Nenhum item para salvar');
       return false;
@@ -253,7 +253,7 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
       const { data: weighingData, error: weighingError } = await supabase
         .from('weighings')
         .insert({
-          buyer_id: buyerId,
+          buyer_id: buyerId || null,
           total_kg: totalWeight,
           total_price: totalPrice,
           tab_name: settings?.tab1_name || 'Pesagem'

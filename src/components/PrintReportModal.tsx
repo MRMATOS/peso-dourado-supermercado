@@ -39,10 +39,10 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
   });
 
   const handlePrint = async () => {
-    // Sempre salva no histórico se há entradas e comprador selecionado
-    if (selectedBuyerId && currentEntries.length > 0) {
+    // Sempre salva no histórico se há entradas (com ou sem comprador)
+    if (currentEntries.length > 0) {
       try {
-        await saveWeighing(selectedBuyerId);
+        await saveWeighing(selectedBuyerId || null);
       } catch (error) {
         console.error('Erro ao salvar pesagem:', error);
         // Continua com a impressão mesmo se houver erro no salvamento
