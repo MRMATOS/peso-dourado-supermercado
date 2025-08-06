@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import WeighingReport from '@/components/WeighingReport';
 
 interface PrintReportModalProps {
@@ -30,7 +29,6 @@ interface PrintReportModalProps {
 const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
   const { buyers, currentEntries, saveWeighing } = useWeighing();
   const [selectedBuyerId, setSelectedBuyerId] = useState<string>('');
-  const [printOnlyCurrentData, setPrintOnlyCurrentData] = useState(true);
   
   const reportRef = useRef<HTMLDivElement>(null);
   
@@ -41,6 +39,7 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
   });
 
   const handlePrint = async () => {
+    // Sempre salva no histórico se há entradas e comprador selecionado
     if (selectedBuyerId && currentEntries.length > 0) {
       try {
         await saveWeighing(selectedBuyerId);
@@ -82,18 +81,6 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
             </Select>
           </div>
 
-          <div className="flex items-center space-x-2 pt-2">
-            <Checkbox
-              id="currentData"
-              checked={printOnlyCurrentData}
-              onCheckedChange={(checked) => 
-                setPrintOnlyCurrentData(checked as boolean)
-              }
-            />
-            <Label htmlFor="currentData" className="text-sm text-gray-700">
-              Imprimir apenas dados atuais (não salvas)
-            </Label>
-          </div>
         </div>
 
         {/* Hidden report component for printing */}
