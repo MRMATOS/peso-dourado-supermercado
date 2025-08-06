@@ -267,8 +267,6 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
       const weighingEntries = currentEntries.map(entry => ({
         weighing_id: weighingData.id,
         item_type: entry.itemType,
-        // Update: properly handle product_id for entries
-        ...(entry.productId ? { product_id: entry.productId } : {}),
         gross_weight: entry.grossWeightKg,
         tare_used: entry.tareKg,
         net_weight: entry.netWeightKg,
