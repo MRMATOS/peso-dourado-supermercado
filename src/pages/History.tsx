@@ -10,10 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { formatCurrency, formatDate, formatNumber } from '@/lib/utils';
-import { getWeighings } from '@/services/database';
+import { getWeighings, getWeighingDetails } from '@/services/database';
+import { WeighingEntry } from '@/types/database';
 import { Home, ChevronLeft, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -46,6 +48,8 @@ const HistoryPage = () => {
   const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().substring(0, 10)
   );
+  const [expandedWeighingId, setExpandedWeighingId] = useState<string | null>(null);
+  const [weighingDetails, setWeighingDetails] = useState<Record<string, WeighingEntry[]>>({});
 
   // Load weighings based on the selected period
   const loadWeighings = async () => {
@@ -114,30 +118,29 @@ const HistoryPage = () => {
     loadWeighings();
   }, [filterPeriod]);
 
-  // Group weighings by type
-  const groupedByType: Record<string, { totalWeight: number; totalPrice: number }> = {};
-
-  // Calculate buyers ranking
-  const buyersRanking: Record<string, { name: string; totalPrice: number }> = {};
-
-  // Process data for summaries
-  weighings.forEach((weighing) => {
-    // For buyer ranking - Add null check before accessing buyer properties
-    if (weighing.buyer && weighing.buyer_id) {
-      if (!buyersRanking[weighing.buyer_id]) {
-        buyersRanking[weighing.buyer_id] = {
-          name: weighing.buyer.name,
-          totalPrice: 0,
-        };
-      }
-      buyersRanking[weighing.buyer_id].totalPrice += weighing.total_price;
+  // Load weighing details when expanding
+  const handleToggleExpand = async (weighingId: string) => {
+    if (expandedWeighingId === weighingId) {
+      setExpandedWeighingId(null);
+      return;
     }
-  });
 
-  // Sort buyers by total price
-  const buyersRankingSorted = Object.values(buyersRanking)
-    .sort((a, b) => b.totalPrice - a.totalPrice)
-    .slice(0, 5); // Top 5
+    setExpandedWeighingId(weighingId);
+
+    // Load details if not already loaded
+    if (!weighingDetails[weighingId]) {
+      try {
+        const details = await getWeighingDetails(weighingId) as WeighingEntry[];
+        setWeighingDetails(prev => ({
+          ...prev,
+          [weighingId]: details
+        }));
+      } catch (error) {
+        console.error('Error loading weighing details:', error);
+        toast.error('Erro ao carregar detalhes da pesagem');
+      }
+    }
+  };
 
   // Calculate grand totals
   const totalWeighings = weighings.length;
@@ -254,45 +257,21 @@ const HistoryPage = () => {
                 </p>
               </div>
             ) : (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-muted-foreground text-sm">Total de Pesagens</p>
-                    <p className="text-2xl font-bold">{totalWeighings}</p>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-muted-foreground text-sm">Peso Total</p>
-                    <p className="text-2xl font-bold">{formatNumber(totalWeight, 2)} kg</p>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-muted-foreground text-sm">Valor Total</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {formatCurrency(totalPrice)}
-                    </p>
-                  </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-muted-foreground text-sm">Total de Pesagens</p>
+                  <p className="text-2xl font-bold">{totalWeighings}</p>
                 </div>
-
-                {buyersRankingSorted.length > 0 && (
-                  <div>
-                    <h3 className="font-medium mb-2">Ranking de Compradores</h3>
-                    <div className="space-y-2">
-                      {buyersRankingSorted.map((buyer, idx) => (
-                        <div
-                          key={buyer.name}
-                          className="flex justify-between items-center p-2 bg-muted rounded"
-                        >
-                          <div className="flex items-center">
-                            <span className="font-medium mr-2">#{idx + 1}</span>
-                            <span>{buyer.name}</span>
-                          </div>
-                          <span className="font-medium text-green-600">
-                            {formatCurrency(buyer.totalPrice)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-muted-foreground text-sm">Peso Total</p>
+                  <p className="text-2xl font-bold">{formatNumber(totalWeight, 2)} kg</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-muted-foreground text-sm">Valor Total</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {formatCurrency(totalPrice)}
+                  </p>
+                </div>
               </div>
             )}
           </CardContent>
@@ -320,39 +299,72 @@ const HistoryPage = () => {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-muted">
+                    <th className="p-2 text-left w-8"></th>
                     <th className="p-2 text-left">Data</th>
-                    <th className="p-2 text-left">Comprador</th>
                     <th className="p-2 text-right">Peso Total (kg)</th>
                     <th className="p-2 text-right">Valor Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   {weighings.map((weighing) => (
-                    <tr key={weighing.id} className="border-b">
-                      <td className="p-2">
-                        {formatDate(weighing.created_at)}
-                      </td>
-                      <td className="p-2">
-                        {weighing.buyer ? (
-                          <>
-                            {weighing.buyer.name}
-                            {weighing.buyer.company && (
-                              <span className="text-xs text-muted-foreground ml-1">
-                                ({weighing.buyer.company})
-                              </span>
-                            )}
-                          </>
-                        ) : (
-                          <span className="text-muted-foreground">Comprador não disponível</span>
-                        )}
-                      </td>
-                      <td className="p-2 text-right">
-                        {formatNumber(weighing.total_kg)}
-                      </td>
-                      <td className="p-2 text-right font-medium">
-                        {formatCurrency(weighing.total_price)}
-                      </td>
-                    </tr>
+                    <React.Fragment key={weighing.id}>
+                      <tr 
+                        className="border-b hover:bg-gray-50 cursor-pointer"
+                        onClick={() => handleToggleExpand(weighing.id)}
+                      >
+                        <td className="p-2 text-center">
+                          {expandedWeighingId === weighing.id ? (
+                            <ChevronUp className="h-4 w-4 inline" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4 inline" />
+                          )}
+                        </td>
+                        <td className="p-2">
+                          {formatDate(weighing.created_at)}
+                        </td>
+                        <td className="p-2 text-right">
+                          {formatNumber(weighing.total_kg)}
+                        </td>
+                        <td className="p-2 text-right font-medium">
+                          {formatCurrency(weighing.total_price)}
+                        </td>
+                      </tr>
+                      {expandedWeighingId === weighing.id && weighingDetails[weighing.id] && (
+                        <tr>
+                          <td colSpan={4} className="p-0">
+                            <div className="bg-gray-50 p-4 border-t">
+                              <h4 className="font-semibold mb-3 text-sm text-gray-700">Detalhes da Pesagem</h4>
+                              <div className="overflow-x-auto">
+                                <table className="w-full text-xs border-collapse">
+                                  <thead>
+                                    <tr className="bg-gray-200">
+                                      <th className="p-2 text-left border">Tipo</th>
+                                      <th className="p-2 text-right border">Peso Bruto</th>
+                                      <th className="p-2 text-right border">Tara</th>
+                                      <th className="p-2 text-right border">Peso Líquido</th>
+                                      <th className="p-2 text-right border">Preço Unit.</th>
+                                      <th className="p-2 text-right border">Valor Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {weighingDetails[weighing.id].map((entry) => (
+                                      <tr key={entry.id} className="border-b">
+                                        <td className="p-2 border">{entry.item_type}</td>
+                                        <td className="p-2 text-right border">{formatNumber(entry.gross_weight, 2)} kg</td>
+                                        <td className="p-2 text-right border">{formatNumber(entry.tare_used, 2)} kg</td>
+                                        <td className="p-2 text-right border font-semibold">{formatNumber(entry.net_weight, 2)} kg</td>
+                                        <td className="p-2 text-right border">{formatCurrency(entry.unit_price)}</td>
+                                        <td className="p-2 text-right border font-semibold text-emerald-600">{formatCurrency(entry.total_price)}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>

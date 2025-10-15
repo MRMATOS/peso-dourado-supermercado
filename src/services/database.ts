@@ -244,12 +244,9 @@ export async function getWeighings(options?: {
 export async function getWeighingDetails(weighingId: string) {
   const { data, error } = await supabase
     .from('weighing_entries')
-    .select(`
-      *,
-      product:products(*)
-    `)
+    .select('*')
     .eq('weighing_id', weighingId)
-    .order('id');
+    .order('created_at');
     
   if (error) throw error;
   return data || [];

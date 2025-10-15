@@ -72,4 +72,5 @@ export interface Settings {
   report_footer2: string;
   tab1_name?: string;
   tab2_name?: string;
+  detailed_report?: boolean;
 }

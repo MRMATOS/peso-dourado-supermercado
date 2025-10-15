@@ -4,7 +4,6 @@ import { WeighingProvider } from '@/contexts/WeighingContext';
 import { useWeighing } from '@/contexts/WeighingContext';
 import WeighingForm from '@/components/WeighingForm';
 import EntriesList from '@/components/EntriesList';
-import SaveWeighingModal from '@/components/SaveWeighingModal';
 import PrintReportModal from '@/components/PrintReportModal';
 import NewWeighingModal from '@/components/NewWeighingModal';
 import { History, Settings } from 'lucide-react';
@@ -13,7 +12,6 @@ import { Link } from 'react-router-dom';
 
 const WeighingPage = () => {
   const { currentEntries, clearEntries } = useWeighing();
-  const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [printModalOpen, setPrintModalOpen] = useState(false);
   const [newWeighingModalOpen, setNewWeighingModalOpen] = useState(false);
 
@@ -27,10 +25,6 @@ const WeighingPage = () => {
 
   const handlePrint = () => {
     setPrintModalOpen(true);
-  };
-
-  const handleSave = () => {
-    setSaveModalOpen(true);
   };
 
   return (
@@ -61,13 +55,7 @@ const WeighingPage = () => {
 
         <EntriesList 
           onPrint={handlePrint}
-          onSave={handleSave}
           onNew={handleNewWeighing}
-        />
-
-        <SaveWeighingModal
-          open={saveModalOpen}
-          onOpenChange={setSaveModalOpen}
         />
 
         <PrintReportModal
@@ -83,7 +71,7 @@ const WeighingPage = () => {
             setNewWeighingModalOpen(false);
           }}
           onSave={() => {
-            setSaveModalOpen(true);
+            setPrintModalOpen(true);
             setNewWeighingModalOpen(false);
           }}
         />

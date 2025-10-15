@@ -3,18 +3,16 @@ import { useWeighing } from '@/contexts/WeighingContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency, formatNumber } from '@/lib/utils';
-import { ArrowDownAZ, ArrowUpAZ, Trash2, ClipboardList, Printer, Save, Plus } from 'lucide-react';
+import { ArrowDownAZ, ArrowUpAZ, Trash2, ClipboardList, Printer, Plus } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface EntriesListProps {
   onPrint?: () => void;
-  onSave?: () => void;
   onNew?: () => void;
 }
 
 const EntriesList = ({
   onPrint,
-  onSave,
   onNew
 }: EntriesListProps) => {
   const {

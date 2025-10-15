@@ -10,15 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import WeighingReport from '@/components/WeighingReport';
 
 interface PrintReportModalProps {
@@ -27,8 +19,7 @@ interface PrintReportModalProps {
 }
 
 const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
-  const { buyers, currentEntries, saveWeighing } = useWeighing();
-  const [selectedBuyerId, setSelectedBuyerId] = useState<string>('');
+  const { currentEntries, saveWeighing, settings } = useWeighing();
   
   const reportRef = useRef<HTMLDivElement>(null);
   
@@ -39,10 +30,10 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
   });
 
   const handlePrint = async () => {
-    // Sempre salva no histórico se há entradas (com ou sem comprador)
+    // Sempre salva no histórico se há entradas
     if (currentEntries.length > 0) {
       try {
-        await saveWeighing(selectedBuyerId || null);
+        await saveWeighing(null);
       } catch (error) {
         console.error('Erro ao salvar pesagem:', error);
         // Continua com a impressão mesmo se houver erro no salvamento
@@ -53,42 +44,20 @@ const PrintReportModal = ({ open, onOpenChange }: PrintReportModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[475px] rounded-lg shadow-lg p-0">
+      <DialogContent className="sm:max-w-[425px] rounded-lg shadow-lg p-0">
         <DialogHeader className="p-5">
           <DialogTitle className="text-xl font-semibold text-gray-900">Imprimir Relatório</DialogTitle>
           <DialogDescription className="text-gray-600">
-            Configure as opções de impressão.
+            Clique em imprimir para salvar e gerar o relatório.
           </DialogDescription>
         </DialogHeader>
-
-        <div className="space-y-4 p-5 pt-0">
-          <div className="space-y-2">
-            <Label htmlFor="buyer">Comprador</Label>
-            <Select
-              value={selectedBuyerId}
-              onValueChange={setSelectedBuyerId}
-            >
-              <SelectTrigger id="buyer" className="rounded-lg h-9">
-                <SelectValue placeholder="Selecione o comprador" />
-              </SelectTrigger>
-              <SelectContent>
-                {buyers.map((buyer) => (
-                  <SelectItem key={buyer.id} value={buyer.id}>
-                    {buyer.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-        </div>
 
         {/* Hidden report component for printing */}
         <div className="hidden">
           <div ref={reportRef}>
             <WeighingReport
               entries={currentEntries}
-              buyerId={selectedBuyerId || undefined}
+              isDetailed={settings?.detailed_report || false}
             />
           </div>
         </div>

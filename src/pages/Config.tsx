@@ -9,9 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Home, ChevronLeft, Plus, Trash2, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import NumberInput from '@/components/NumberInput';
-import { createProduct, getProducts, updateProduct, deleteProduct, createUnitPrice, getUnitPrices, updateUnitPrice, deleteUnitPrice, createTareWeight, getTareWeights, updateTareWeight, deleteTareWeight, getBuyers, createBuyer, updateBuyer, deleteBuyer, getSettings, updateSettings } from '@/services/database';
-import { formatDocument, validateDocument, formatPhone } from '@/lib/utils';
-import { Buyer, Product, TareWeight, UnitPrice, Settings } from '@/types/database';
+import { createProduct, getProducts, updateProduct, deleteProduct, createUnitPrice, getUnitPrices, updateUnitPrice, deleteUnitPrice, createTareWeight, getTareWeights, updateTareWeight, deleteTareWeight, getSettings, updateSettings } from '@/services/database';
+import { Product, TareWeight, UnitPrice, Settings } from '@/types/database';
 const ConfigPage = () => {
   const [activeTab, setActiveTab] = useState('types');
   const [isLoading, setIsLoading] = useState(true);
@@ -35,18 +34,11 @@ const ConfigPage = () => {
   const [newTareType, setNewTareType] = useState('');
   const [newTareWeight, setNewTareWeight] = useState(0);
 
-  // Buyers data
-  const [buyers, setBuyers] = useState<Buyer[]>([]);
-  const [editedBuyers, setEditedBuyers] = useState<Record<string, Partial<Buyer>>>({});
-  const [newBuyerName, setNewBuyerName] = useState('');
-  const [newBuyerPhone, setNewBuyerPhone] = useState('');
-  const [newBuyerDocument, setNewBuyerDocument] = useState('');
-  const [newBuyerCompany, setNewBuyerCompany] = useState('');
-
   // Report Settings
   const [settings, setSettings] = useState<Settings | null>(null);
   const [reportFooter1, setReportFooter1] = useState('');
   const [reportFooter2, setReportFooter2] = useState('');
+  const [detailedReport, setDetailedReport] = useState(false);
 
   // Load data based on active tab
   useEffect(() => {
@@ -73,16 +65,12 @@ const ConfigPage = () => {
             const unitPricesForTare = await getUnitPrices();
             setUnitPrices(unitPricesForTare as UnitPrice[]);
             break;
-          case 'buyers':
-            const buyersData = await getBuyers();
-            setBuyers(buyersData as Buyer[]);
-            setEditedBuyers({});
-            break;
           case 'report':
             const settingsData = await getSettings();
             setSettings(settingsData as Settings | null);
             setReportFooter1(settingsData?.report_footer1 || '');
             setReportFooter2(settingsData?.report_footer2 || '');
+            setDetailedReport(settingsData?.detailed_report || false);
             break;
         }
       } catch (error) {
@@ -387,132 +375,14 @@ const ConfigPage = () => {
     }
   };
 
-  // Buyers handlers
-  const handleAddBuyer = async () => {
-    if (!newBuyerName.trim()) {
-      toast.error('O nome do comprador é obrigatório');
-      return;
-    }
-    if (!newBuyerPhone.trim()) {
-      toast.error('O telefone do comprador é obrigatório');
-      return;
-    }
-    if (newBuyerDocument && !validateDocument(newBuyerDocument)) {
-      toast.error('Documento inválido');
-      return;
-    }
-    setIsLoading(true);
-    try {
-      // Check if buyer already exists
-      const existingByName = buyers.find(b => b.name.toLowerCase() === newBuyerName.trim().toLowerCase());
-      if (existingByName) {
-        toast.error('Já existe um comprador com este nome');
-        setIsLoading(false);
-        return;
-      }
-      const existingByPhone = buyers.find(b => b.phone === newBuyerPhone.replace(/\D/g, ''));
-      if (existingByPhone) {
-        toast.error('Já existe um comprador com este telefone');
-        setIsLoading(false);
-        return;
-      }
-      if (newBuyerDocument) {
-        const existingByDocument = buyers.find(b => b.document === newBuyerDocument.replace(/\D/g, ''));
-        if (existingByDocument) {
-          toast.error('Já existe um comprador com este documento');
-          setIsLoading(false);
-          return;
-        }
-      }
-      const newBuyer = await createBuyer({
-        name: newBuyerName.trim(),
-        phone: newBuyerPhone.replace(/\D/g, ''),
-        document: newBuyerDocument ? newBuyerDocument.replace(/\D/g, '') : undefined,
-        company: newBuyerCompany.trim() || undefined
-      });
-      setBuyers([...buyers, newBuyer]);
-      setNewBuyerName('');
-      setNewBuyerPhone('');
-      setNewBuyerDocument('');
-      setNewBuyerCompany('');
-      toast.success('Comprador adicionado com sucesso');
-    } catch (error) {
-      console.error('Error adding buyer:', error);
-      toast.error('Erro ao adicionar comprador');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleBuyerChange = (id: string, field: keyof Buyer, value: string) => {
-    setEditedBuyers({
-      ...editedBuyers,
-      [id]: {
-        ...(editedBuyers[id] || {}),
-        [field]: value
-      }
-    });
-  };
-  const handleSaveBuyers = async () => {
-    setIsLoading(true);
-    try {
-      const updates = Object.entries(editedBuyers);
-      if (updates.length === 0) {
-        toast.info('Nenhuma alteração para salvar');
-        setIsLoading(false);
-        return;
-      }
-      for (const [id, data] of updates) {
-        await updateBuyer(id, data);
-      }
-      setBuyers(buyers.map(b => {
-        if (editedBuyers[b.id]) {
-          return {
-            ...b,
-            ...editedBuyers[b.id]
-          };
-        }
-        return b;
-      }));
-      setEditedBuyers({});
-      toast.success('Compradores atualizados com sucesso');
-    } catch (error) {
-      console.error('Error updating buyers:', error);
-      toast.error('Erro ao atualizar compradores');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleDeleteBuyer = async (id: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir este comprador?')) {
-      return;
-    }
-    setIsLoading(true);
-    try {
-      await deleteBuyer(id);
-      setBuyers(buyers.filter(b => b.id !== id));
-
-      // Remove from edited state if present
-      const {
-        [id]: _,
-        ...rest
-      } = editedBuyers;
-      setEditedBuyers(rest);
-      toast.success('Comprador excluído com sucesso');
-    } catch (error) {
-      console.error('Error deleting buyer:', error);
-      toast.error('Erro ao excluir comprador');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Report Settings handlers
   const handleSaveReportSettings = async () => {
     setIsLoading(true);
     try {
       const updatedSettings = await updateSettings({
         report_footer1: reportFooter1.trim(),
-        report_footer2: reportFooter2.trim()
+        report_footer2: reportFooter2.trim(),
+        detailed_report: detailedReport
       });
       setSettings(updatedSettings);
       toast.success('Configurações atualizadas com sucesso');
@@ -548,12 +418,11 @@ const ConfigPage = () => {
       </header>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <TabsTrigger value="types" className="text-[#3A86F7]">Tipos de Pesagem</TabsTrigger>
           <TabsTrigger value="products" className="text-[#3A86F7]">Produtos</TabsTrigger>
           <TabsTrigger value="tare" className="text-[#3A86F7]">Taras</TabsTrigger>
-          <TabsTrigger value="buyers" className="text-[#3A86F7]">Compradores</TabsTrigger>
-          <TabsTrigger value="report" className="text-[#3A86F7]">Rodapé Relatório</TabsTrigger>
+          <TabsTrigger value="report" className="text-[#3A86F7]">Relatório</TabsTrigger>
         </TabsList>
 
         {/* Types of Weighing */}
@@ -798,105 +667,13 @@ const ConfigPage = () => {
           </Card>
         </TabsContent>
 
-        {/* Buyers */}
-        <TabsContent value="buyers" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle style={{
-              color: "#3A86F7"
-            }}>Cadastro de Compradores</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="space-y-2">
-                  <Label htmlFor="newBuyerName">
-                    Nome <span className="text-red-500">*</span>
-                  </Label>
-                  <Input id="newBuyerName" value={newBuyerName} onChange={e => setNewBuyerName(e.target.value)} placeholder="Nome do comprador" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="newBuyerPhone">
-                    Telefone <span className="text-red-500">*</span>
-                  </Label>
-                  <Input id="newBuyerPhone" value={formatPhone(newBuyerPhone)} onChange={e => setNewBuyerPhone(e.target.value.replace(/\D/g, ''))} placeholder="(42) 00000-0000" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="newBuyerDocument">
-                    Documento (CPF, CNPJ ou RG)
-                  </Label>
-                  <Input id="newBuyerDocument" value={formatDocument(newBuyerDocument)} onChange={e => setNewBuyerDocument(e.target.value.replace(/\D/g, ''))} placeholder="Documento" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="newBuyerCompany">Empresa</Label>
-                  <Input id="newBuyerCompany" value={newBuyerCompany} onChange={e => setNewBuyerCompany(e.target.value)} placeholder="Nome da empresa (opcional)" />
-                </div>
-                <div className="md:col-span-2 flex justify-end">
-                  <Button onClick={handleAddBuyer} disabled={isLoading || !newBuyerName.trim() || !newBuyerPhone.trim() || newBuyerDocument && !validateDocument(newBuyerDocument)} size="sm" className="flex items-center">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Adicionar Comprador
-                  </Button>
-                </div>
-              </div>
-
-              {isLoading ? <div className="py-8 text-center">
-                  <p className="text-muted-foreground">Carregando...</p>
-                </div> : buyers.length === 0 ? <div className="py-8 text-center">
-                  <p className="text-muted-foreground">
-                    Nenhum comprador cadastrado.
-                  </p>
-                </div> : <>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="bg-muted">
-                          <th className="p-2 text-left">Nome</th>
-                          <th className="p-2 text-left">Telefone</th>
-                          <th className="p-2 text-left">Documento</th>
-                          <th className="p-2 text-left">Empresa</th>
-                          <th className="p-2 text-center">Ações</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {buyers.map(buyer => <tr key={buyer.id} className="border-b">
-                            <td className="p-2">
-                              <Input value={editedBuyers[buyer.id]?.name !== undefined ? editedBuyers[buyer.id]?.name as string : buyer.name} onChange={e => handleBuyerChange(buyer.id, 'name', e.target.value)} />
-                            </td>
-                            <td className="p-2">
-                              <Input value={formatPhone(editedBuyers[buyer.id]?.phone !== undefined ? editedBuyers[buyer.id]?.phone as string : buyer.phone)} onChange={e => handleBuyerChange(buyer.id, 'phone', e.target.value.replace(/\D/g, ''))} />
-                            </td>
-                            <td className="p-2">
-                              <Input value={formatDocument(editedBuyers[buyer.id]?.document !== undefined ? editedBuyers[buyer.id]?.document as string || '' : buyer.document || '')} onChange={e => handleBuyerChange(buyer.id, 'document', e.target.value.replace(/\D/g, '') || null)} />
-                            </td>
-                            <td className="p-2">
-                              <Input value={editedBuyers[buyer.id]?.company !== undefined ? editedBuyers[buyer.id]?.company as string || '' : buyer.company || ''} onChange={e => handleBuyerChange(buyer.id, 'company', e.target.value || null)} />
-                            </td>
-                            <td className="p-2 text-center">
-                              <Button variant="ghost" size="icon" onClick={() => handleDeleteBuyer(buyer.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
-                                <Trash2 className="h-5 w-5" />
-                              </Button>
-                            </td>
-                          </tr>)}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="flex justify-end mt-4">
-                    <Button onClick={handleSaveBuyers} disabled={isLoading || Object.keys(editedBuyers).length === 0} size="sm" className="flex items-center">
-                      <Save className="mr-2 h-4 w-4" />
-                      Salvar
-                    </Button>
-                  </div>
-                </>}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         {/* Report Settings */}
         <TabsContent value="report" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle style={{
               color: "#3A86F7"
-            }}>Configurações do Rodapé do Relatório</CardTitle>
+            }}>Configurações do Relatório</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -907,6 +684,18 @@ const ConfigPage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="reportFooter2">Rodapé Linha 2</Label>
                   <Input id="reportFooter2" value={reportFooter2} onChange={e => setReportFooter2(e.target.value)} placeholder="Texto da segunda linha do rodapé" />
+                </div>
+                <div className="flex items-center space-x-2 pt-4">
+                  <input 
+                    type="checkbox" 
+                    id="detailedReport" 
+                    checked={detailedReport} 
+                    onChange={(e) => setDetailedReport(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-[#3A86F7] focus:ring-[#3A86F7]"
+                  />
+                  <Label htmlFor="detailedReport" className="cursor-pointer">
+                    Relatório detalhado (mostra todos os itens pesados)
+                  </Label>
                 </div>
                 <div className="flex justify-end mt-4">
                   <Button onClick={handleSaveReportSettings} disabled={isLoading} size="sm" className="flex items-center">

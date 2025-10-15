@@ -6,9 +6,6 @@ import {
   UnitPrice,
   TareWeight,
   Product,
-  Buyer,
-  WeighingEntry,
-  Weighing,
   Settings,
   WeighingEntryForm
 } from '@/types/database';
@@ -17,7 +14,6 @@ interface WeighingContextType {
   // Data lists
   itemTypes: string[];
   products: Product[];
-  buyers: Buyer[];
   tarifsById: Record<string, number>;
   pricesById: Record<string, number>;
   
@@ -40,12 +36,6 @@ interface WeighingContextType {
   // Loading state
   isLoading: boolean;
   isSaving: boolean;
-  
-  // New method to add a buyer and get the created buyer
-  addBuyer: (buyer: Omit<Buyer, 'id' | 'created_at'>) => Promise<Buyer | null>;
-  
-  // Refresh data methods
-  refreshBuyers: () => Promise<void>;
 }
 
 const WeighingContext = createContext<WeighingContextType | undefined>(undefined);
@@ -54,7 +44,6 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
   // Data states
   const [itemTypes, setItemTypes] = useState<string[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [buyers, setBuyers] = useState<Buyer[]>([]);
   const [tarifsById, setTarifsById] = useState<Record<string, number>>({});
   const [pricesById, setPricesById] = useState<Record<string, number>>({});
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -136,15 +125,6 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
       if (productsError) throw productsError;
       setProducts(productsData);
       
-      // Load buyers
-      const { data: buyersData, error: buyersError } = await supabase
-        .from('buyers')
-        .select('*')
-        .order('name');
-        
-      if (buyersError) throw buyersError;
-      setBuyers(buyersData);
-      
       // Load settings
       const { data: settingsData, error: settingsError } = await supabase
         .from('settings')
@@ -160,44 +140,6 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     }
   }
-  
-  // Refresh buyers list
-  const refreshBuyers = async () => {
-    try {
-      const { data: buyersData, error: buyersError } = await supabase
-        .from('buyers')
-        .select('*')
-        .order('name');
-        
-      if (buyersError) throw buyersError;
-      setBuyers(buyersData);
-    } catch (error) {
-      console.error('Error refreshing buyers:', error);
-      toast.error('Erro ao atualizar lista de compradores');
-    }
-  };
-  
-  // Add a new buyer and return the created buyer
-  const addBuyer = async (buyer: Omit<Buyer, 'id' | 'created_at'>): Promise<Buyer | null> => {
-    try {
-      const { data, error } = await supabase
-        .from('buyers')
-        .insert(buyer)
-        .select()
-        .single();
-        
-      if (error) throw error;
-      
-      // Update the buyers list
-      await refreshBuyers();
-      
-      return data;
-    } catch (error) {
-      console.error('Error adding buyer:', error);
-      toast.error('Erro ao adicionar comprador');
-      return null;
-    }
-  };
   
   // Add entry
   const addEntry = (entry: Omit<WeighingEntryForm, 'id' | 'createdAt'>) => {
@@ -296,7 +238,6 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
       value={{
         itemTypes,
         products,
-        buyers,
         tarifsById,
         pricesById,
         currentEntries: sortedEntries,
@@ -308,9 +249,7 @@ export function WeighingProvider({ children }: { children: ReactNode }) {
         settings,
         saveWeighing,
         isLoading,
-        isSaving,
-        addBuyer,
-        refreshBuyers
+        isSaving
       }}
     >
       {children}

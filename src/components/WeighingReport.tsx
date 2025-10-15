@@ -1,16 +1,16 @@
 
 import React from 'react';
 import { useWeighing } from '@/contexts/WeighingContext';
-import { formatCurrency, formatDate, formatNumber, formatPhone, formatDocument } from '@/lib/utils';
+import { formatCurrency, formatDate, formatNumber } from '@/lib/utils';
 import { WeighingEntryForm } from '@/types/database';
 
 interface WeighingReportProps {
   entries: WeighingEntryForm[];
-  buyerId?: string;
+  isDetailed?: boolean;
 }
 
-const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
-  const { buyers, settings, tarifsById } = useWeighing();
+const WeighingReport = ({ entries, isDetailed = false }: WeighingReportProps) => {
+  const { settings, tarifsById } = useWeighing();
   
   // Group entries by item type
   const entriesByType: Record<string, WeighingEntryForm[]> = {};
@@ -32,9 +32,6 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
     ossoEntriesByProduct[productKey].push(entry);
   });
   
-  // Get selected buyer
-  const selectedBuyer = buyerId ? buyers.find(b => b.id === buyerId) : null;
-  
   // Calculate totals
   const totalNetWeight = entries.reduce((sum, entry) => sum + entry.netWeightKg, 0);
   const totalPrice = entries.reduce((sum, entry) => sum + entry.totalPrice, 0);
@@ -49,19 +46,43 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
         <p className="text-xs text-gray-600">
           Data de emissão: {formatDate(new Date())}
         </p>
-        {selectedBuyer && (
-          <div className="mt-2 p-3 border rounded-lg bg-gray-50 text-left">
-            <h3 className="text-sm font-medium mb-1">Dados do Comprador:</h3>
-            <p className="text-xs mb-0.5"><strong>Nome:</strong> {selectedBuyer.name}</p>
-            {selectedBuyer.phone && <p className="text-xs mb-0.5"><strong>Telefone:</strong> {formatPhone(selectedBuyer.phone)}</p>}
-            {selectedBuyer.document && <p className="text-xs mb-0.5"><strong>Documento:</strong> {formatDocument(selectedBuyer.document)}</p>}
-            {selectedBuyer.company && <p className="text-xs mb-0.5"><strong>Empresa:</strong> {selectedBuyer.company}</p>}
-          </div>
-        )}
       </div>
 
-      {/* Content - Only Totals */}
+      {/* Content */}
       <div className="space-y-3">
+        {isDetailed ? (
+          /* Detailed Report - Show all items */
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-xs">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="p-2 text-left border">TIPO</th>
+                  <th className="p-2 text-left border">PRODUTO</th>
+                  <th className="p-2 text-right border">PESO BRUTO</th>
+                  <th className="p-2 text-right border">TARA</th>
+                  <th className="p-2 text-right border">PESO LÍQUIDO</th>
+                  <th className="p-2 text-right border">PREÇO UNIT.</th>
+                  <th className="p-2 text-right border">VALOR TOTAL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {entries.map((entry, idx) => (
+                  <tr key={idx} className="border-b">
+                    <td className="p-2 border">{entry.itemType}</td>
+                    <td className="p-2 border">{entry.productDescription || '-'}</td>
+                    <td className="p-2 text-right border">{formatNumber(entry.grossWeightKg, 2)} kg</td>
+                    <td className="p-2 text-right border">{formatNumber(entry.tareKg, 2)} kg</td>
+                    <td className="p-2 text-right border font-semibold">{formatNumber(entry.netWeightKg, 2)} kg</td>
+                    <td className="p-2 text-right border">{formatCurrency(entry.unitPrice)}</td>
+                    <td className="p-2 text-right border font-semibold text-emerald-600">{formatCurrency(entry.totalPrice)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          /* Simplified Report - Show only totals */
+          <>
         {/* Group by item type */}
         {Object.entries(entriesByType)
           .filter(([type]) => type !== 'Osso') // Handle Osso separately
@@ -140,6 +161,8 @@ const WeighingReport = ({ entries, buyerId }: WeighingReportProps) => {
               );
             })}
           </div>
+        )}
+          </>
         )}
         
         {/* Grand Total */}
